@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html class="light" lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Gestión de Servicios</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+
+<link rel="stylesheet" th:href="@{/css/global.css}" />
+</head>
+
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 transition-colors duration-200 min-h-screen flex">
+<div class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 hidden lg:hidden" id="overlay" onclick="toggleMobileMenu()"></div>
+
+<aside class="fixed lg:static top-0 left-0 h-full w-72 bg-white dark:bg-slate-900 z-50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out ios-shadow border-r border-slate-200 dark:border-slate-800 flex-shrink-0" id="side-menu">
+<div class="p-6 flex flex-col h-full">
+<div class="flex items-center justify-between mb-8">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+<span class="material-icons-round text-white text-lg">admin_panel_settings</span>
+</div>
+<span class="font-bold text-xl tracking-tight">Gestión</span>
+</div>
+<button class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full lg:hidden" onclick="toggleMobileMenu()">
+<span class="material-icons-round">close</span>
+</button>
+</div>
+
+<nav class="space-y-1 flex-1 overflow-y-auto no-scrollbar">
+    <a class="flex items-center gap-4 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors" href="/">
+        <span class="material-icons-round">newspaper</span>
+        <span>Noticia</span>
+    </a>
+    
+    <a class="flex items-center gap-4 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors" href="/mis-ministerios">
+        <span class="material-icons-round">groups</span>
+        <span>Mis Ministerios</span>
+    </a>
+    
+    <a class="flex items-center gap-4 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors" href="/estudios">
+        <span class="material-icons-round">school</span>
+        <span>Estudios</span>
+    </a>
+
+    <a class="flex items-center gap-4 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors" href="/usuarios">
+        <span class="material-icons-round">people</span>
+        <span>Gestión Usuario</span>
+    </a>
+    
+    <a class="flex items-center gap-4 px-4 py-3 bg-primary text-white font-medium rounded-xl ios-shadow" href="/servicios">
+        <span class="material-icons-round">volunteer_activism</span>
+        <span>Gestión Servicios</span>
+    </a>
+    
+    <a class="flex items-center gap-4 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors" href="/eventos">
+        <span class="material-icons-round">event</span>
+        <span>Gestión Eventos</span>
+    </a>
+    
+    <a class="flex items-center gap-4 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors" href="/ministerios">
+        <span class="material-icons-round">diversity_3</span>
+        <span>Gestión Ministerios</span>
+    </a>
+    
+    <div class="submenu-container rounded-xl overflow-hidden transition-colors duration-200 hover:bg-slate-50 dark:hover:bg-slate-800/50">
+        <button class="w-full flex items-center justify-between px-4 py-3 text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-white font-medium rounded-xl transition-colors" onclick="toggleSubmenu('bloques-submenu')">
+            <div class="flex items-center gap-4">
+                <span class="material-icons-round">history_edu</span>
+                <span>Bloques y Tips</span>
+            </div>
+            <span class="material-icons-round text-slate-400 transition-transform duration-300" id="bloques-submenu-arrow">expand_more</span>
+        </button>
+        <div class="submenu-transition overflow-hidden max-h-0 opacity-0 transition-all duration-300" id="bloques-submenu">
+            <div class="pl-12 pr-4 pb-2 space-y-1 pt-1">
+                <a class="block py-2 text-sm text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary transition-colors flex items-center gap-2" href="/bloquesytips">
+                    <span class="w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-slate-600"></span>
+                    Gestión de Bloques
+                </a>
+                <a class="block py-2 text-sm text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary transition-colors flex items-center gap-2" href="/clasesimpartiendo">
+                    <span class="w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-slate-600"></span>
+                    Clases Impartiendo
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="submenu-container rounded-xl overflow-hidden transition-colors duration-200 hover:bg-slate-50 dark:hover:bg-slate-800/50">
+        <button class="w-full flex items-center justify-between px-4 py-3 text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-white font-medium rounded-xl transition-colors" onclick="toggleSubmenu('teologia-submenu')">
+            <div class="flex items-center gap-4">
+                <span class="material-icons-round">menu_book</span>
+                <span>Teología</span>
+            </div>
+            <span class="material-icons-round text-slate-400 transition-transform duration-300" id="teologia-submenu-arrow">expand_more</span>
+        </button>
+        <div class="submenu-transition overflow-hidden max-h-0 opacity-0 transition-all duration-300" id="teologia-submenu">
+            <div class="pl-12 pr-4 pb-2 space-y-1 pt-1">
+                <a class="block py-2 text-sm text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary transition-colors flex items-center gap-2" href="/teologia">
+                    <span class="w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-slate-600"></span>
+                    Gestión de Teología
+                </a>
+                <a class="block py-2 text-sm text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary transition-colors flex items-center gap-2" href="/clases-teologia">
+                    <span class="w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-slate-600"></span>
+                    Clases de Teología
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <a class="flex items-center gap-4 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors" href="/reportes">
+        <span class="material-icons-round">analytics</span>
+        <span>Reportes</span>
+    </a>
+</nav>
+
+<div class="pt-6 mt-auto border-t border-slate-100 dark:border-slate-800">
+<button class="w-full flex items-center gap-4 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors" onclick="toggleDarkMode()">
+<span class="material-icons-round dark:hidden">dark_mode</span>
+<span class="material-icons-round hidden dark:block text-yellow-500">light_mode</span>
+<span>Modo Visual</span>
+</button>
+</div>
+</div>
+</aside>
+
+<div class="flex-1 flex flex-col min-w-0 overflow-hidden relative">
+<header class="sticky top-0 z-30 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 px-6 py-4">
+<div class="flex items-center justify-between">
+<button class="p-2 text-slate-600 dark:text-slate-400 lg:hidden" onclick="toggleMobileMenu()">
+<span class="material-icons-round">menu</span>
+</button>
+<div class="hidden lg:block">
+<h1 class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Gestión de Servicios Dominicales</h1>
+</div>
+<h1 class="text-lg font-semibold tracking-tight text-slate-900 dark:text-white lg:hidden">Servicios</h1>
+<div id="user-header-section" class="flex-1 flex justify-end relative z-50"></div>
+</div>
+</header>
+
+<main class="flex-1 overflow-y-auto p-6 lg:p-10 no-scrollbar pb-24">
+    <div class="max-w-7xl mx-auto space-y-8">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+                <h2 class="text-3xl font-bold dark:text-white tracking-tight">Próximos Servicios</h2>
+                <p class="text-slate-500 dark:text-slate-400 mt-1">Administra la planificación de los servicios dominicales.</p>
+            </div>
+            <div class="flex gap-2"></div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="services-grid">
+            
+        </div>
+    </div>
+</main>
+
+<button class="fixed bottom-6 right-6 w-14 h-14 bg-primary text-white rounded-full shadow-lg shadow-primary/40 flex items-center justify-center hover:bg-primary/90 hover:scale-105 transition-all duration-200 z-40 lg:hidden" onclick="openCreateModal()">
+    <span class="material-icons-round text-2xl">add</span>
+</button>
+<button class="fixed bottom-10 right-10 w-16 h-16 bg-primary text-white rounded-full shadow-lg shadow-primary/40 hidden lg:flex items-center justify-center hover:bg-primary/90 hover:scale-110 transition-all duration-200 z-40 group" onclick="openCreateModal()">
+    <span class="material-icons-round text-3xl group-hover:rotate-90 transition-transform duration-300">add</span>
+    <span class="absolute right-full mr-4 bg-slate-900 text-white text-xs font-bold px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Nuevo Servicio</span>
+</button>
+</div>
+
+<div aria-labelledby="modal-title-new" aria-modal="true" class="fixed inset-0 z-[60] hidden" id="modal-nuevo-servicio" role="dialog">
+<div class="fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity" onclick="toggleModal('modal-nuevo-servicio')"></div>
+<div class="fixed inset-0 z-10 overflow-y-auto">
+<div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+<div class="relative transform overflow-hidden rounded-2xl bg-white dark:bg-slate-800 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-4xl border border-slate-100 dark:border-slate-700 w-full"><div class="bg-white dark:bg-slate-800 px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+<div class="sm:flex sm:items-start">
+<div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30 sm:mx-0 sm:h-10 sm:w-10">
+<span class="material-icons-round text-primary dark:text-blue-400">add</span>
+</div>
+<div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left w-full">
+<h3 class="text-lg font-semibold leading-6 text-slate-900 dark:text-white" id="modal-title-new">Agregar Nuevo Servicio</h3>
+<div class="mt-4">
+    
+    <div id="service-error-msg" class="hidden mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl text-sm text-red-600 dark:text-red-400 font-medium flex items-center gap-2">
+        <span class="material-icons-round text-lg">error_outline</span>
+        <span id="service-error-text">Mensaje de error</span>
+    </div>
+
+    <form class="space-y-4" id="form-nuevo-servicio">
+        <div>
+            <label class="block text-sm font-medium text-slate-900 dark:text-slate-200" for="new-service-title">Título del Servicio <span class="text-red-500">*</span></label>
+            <input class="block w-full rounded-md border-0 py-2 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-primary dark:bg-slate-700 dark:text-white" id="new-service-title" placeholder="Ej. Culto General" type="text"/>
+        </div>
+    
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+            <div>
+                <label class="block text-sm font-medium text-slate-900 dark:text-slate-200" for="new-service-date">Fecha <span class="text-red-500">*</span></label>
+                <input class="block w-full rounded-md border-0 py-2 dark:bg-slate-700 dark:text-white ring-1 ring-slate-300" id="new-service-date" type="date"/>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-slate-900 dark:text-slate-200">Hora <span class="text-red-500">*</span></label>
+                <div class="flex gap-1">
+                    <select class="block w-full rounded-md border-0 py-2 dark:bg-slate-700 text-sm" id="new-service-hour"><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12" selected>12</option></select>
+                    <select class="block w-full rounded-md border-0 py-2 dark:bg-slate-700 text-sm" id="new-service-minute"><option value="00">00</option><option value="15">15</option><option value="30">30</option><option value="45">45</option></select>
+                    <select class="block w-24 rounded-md border-0 py-2 dark:bg-slate-700 text-sm" id="new-service-ampm"><option value="AM">AM</option><option value="PM" selected>PM</option></select>
+                </div>
+            </div>
+        </div>
+    
+        <div class="p-3 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-700 mb-3">
+            <div class="flex items-center gap-2 mb-2">
+                <span class="material-icons-round text-blue-500 text-sm">school</span>
+                <span class="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider">Maestro</span>
+            </div>
+            <div class="grid grid-cols-12 gap-2 items-end">
+                <div class="col-span-4 relative">
+                    <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Nac. / Cédula</label>
+                    <div class="flex gap-1">
+                        <select id="new-service-teacher-nac" class="block w-12 rounded-lg border-0 py-1.5 text-sm ring-1 ring-slate-300 dark:bg-slate-800 focus:ring-primary text-center px-1 font-semibold text-slate-700 dark:text-slate-200" onchange="desbloquearStaff('teacher')">
+                            <option value="V">V</option><option value="E">E</option>
+                        </select>
+                        <input class="block w-full rounded-lg border-0 py-1.5 text-sm ring-1 ring-slate-300 dark:bg-slate-800 focus:ring-primary" id="new-service-teacher-cedula" placeholder="12345678" maxlength="8" autocomplete="off" oninput="buscarStaffPorCedula('teacher')" type="text"/>
+                    </div>
+                    <div id="sugg-teacher-cedula" class="absolute z-20 w-full mt-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg hidden max-h-40 overflow-y-auto"></div>
+                </div>
+                <div class="col-span-5 relative">
+                    <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Nombre y Apellido</label>
+                    <input class="block w-full rounded-lg border-0 py-1.5 text-sm ring-1 ring-slate-300 dark:bg-slate-800 focus:ring-primary transition-all" id="new-service-teacher-nombre" placeholder="Nombre Apellido" autocomplete="off" oninput="formatNombreInput(this); buscarStaffPorNombre('teacher')" type="text"/>
+                    <div id="sugg-teacher-nombre" class="absolute z-20 w-full mt-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg hidden max-h-40 overflow-y-auto"></div>
+                </div>
+                <div class="col-span-3 relative">
+                    <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Género</label>
+                    <select id="new-service-teacher-genero" class="block w-full rounded-lg border-0 py-1.5 text-sm ring-1 ring-slate-300 dark:bg-slate-800 focus:ring-primary font-semibold text-slate-700 dark:text-slate-200">
+                        <option value="M">M</option><option value="F">F</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        
+        <div class="p-3 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-700 mb-3">
+            <div class="flex items-center gap-2 mb-2">
+                <span class="material-icons-round text-emerald-500 text-sm">person</span>
+                <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Director</span>
+            </div>
+            <div class="grid grid-cols-12 gap-2 items-end">
+                <div class="col-span-4 relative">
+                    <div class="flex gap-1">
+                        <select id="new-service-director-nac" class="block w-12 rounded-lg border-0 py-1.5 text-sm ring-1 ring-slate-300 dark:bg-slate-800 focus:ring-primary text-center px-1 font-semibold text-slate-700 dark:text-slate-200" onchange="desbloquearStaff('director')">
+                            <option value="V">V</option><option value="E">E</option>
+                        </select>
+                        <input class="block w-full rounded-lg border-0 py-1.5 text-sm ring-1 ring-slate-300 dark:bg-slate-800 focus:ring-primary" id="new-service-director-cedula" placeholder="12345678" maxlength="8" autocomplete="off" oninput="buscarStaffPorCedula('director')" type="text"/>
+                    </div>
+                    <div id="sugg-director-cedula" class="absolute z-20 w-full mt-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg hidden max-h-40 overflow-y-auto"></div>
+                </div>
+                <div class="col-span-5 relative">
+                    <input class="block w-full rounded-lg border-0 py-1.5 text-sm ring-1 ring-slate-300 dark:bg-slate-800 focus:ring-primary transition-all" id="new-service-director-nombre" placeholder="Nombre Apellido" autocomplete="off" oninput="formatNombreInput(this); buscarStaffPorNombre('director')" type="text"/>
+                    <div id="sugg-director-nombre" class="absolute z-20 w-full mt-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg hidden max-h-40 overflow-y-auto"></div>
+                </div>
+                <div class="col-span-3 relative">
+                    <select id="new-service-director-genero" class="block w-full rounded-lg border-0 py-1.5 text-sm ring-1 ring-slate-300 dark:bg-slate-800 focus:ring-primary font-semibold text-slate-700 dark:text-slate-200">
+                        <option value="M">M</option><option value="F">F</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-3 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-700 mb-3">
+            <div class="flex items-center gap-2 mb-2">
+                <span class="material-icons-round text-amber-500 text-sm">supervisor_account</span>
+                <span class="text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">Líder</span>
+            </div>
+            <div class="grid grid-cols-12 gap-2 items-end">
+                <div class="col-span-4 relative">
+                    <div class="flex gap-1">
+                        <select id="new-service-leader-nac" class="block w-12 rounded-lg border-0 py-1.5 text-sm ring-1 ring-slate-300 dark:bg-slate-800 focus:ring-primary text-center px-1 font-semibold text-slate-700 dark:text-slate-200" onchange="desbloquearStaff('leader')">
+                            <option value="V">V</option><option value="E">E</option>
+                        </select>
+                        <input class="block w-full rounded-lg border-0 py-1.5 text-sm ring-1 ring-slate-300 dark:bg-slate-800 focus:ring-primary" id="new-service-leader-cedula" placeholder="12345678" maxlength="8" autocomplete="off" oninput="buscarStaffPorCedula('leader')" type="text"/>
+                    </div>
+                    <div id="sugg-leader-cedula" class="absolute z-20 w-full mt-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg hidden max-h-40 overflow-y-auto"></div>
+                </div>
+                <div class="col-span-5 relative">
+                    <input class="block w-full rounded-lg border-0 py-1.5 text-sm ring-1 ring-slate-300 dark:bg-slate-800 focus:ring-primary transition-all" id="new-service-leader-nombre" placeholder="Nombre Apellido" autocomplete="off" oninput="formatNombreInput(this); buscarStaffPorNombre('leader')" type="text"/>
+                    <div id="sugg-leader-nombre" class="absolute z-20 w-full mt-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg hidden max-h-40 overflow-y-auto"></div>
+                </div>
+                <div class="col-span-3 relative">
+                    <select id="new-service-leader-genero" class="block w-full rounded-lg border-0 py-1.5 text-sm ring-1 ring-slate-300 dark:bg-slate-800 focus:ring-primary font-semibold text-slate-700 dark:text-slate-200">
+                        <option value="M">M</option><option value="F">F</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-3 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-700 mb-3">
+            <div class="flex items-center gap-2 mb-2">
+                <span class="material-icons-round text-rose-500 text-sm">campaign</span>
+                <span class="text-xs font-bold text-rose-600 dark:text-rose-400 uppercase tracking-wider">Predicador</span>
+            </div>
+            <div class="grid grid-cols-12 gap-2 items-end">
+                <div class="col-span-4 relative">
+                    <div class="flex gap-1">
+                        <select id="new-service-preacher-nac" class="block w-12 rounded-lg border-0 py-1.5 text-sm ring-1 ring-slate-300 dark:bg-slate-800 focus:ring-primary text-center px-1 font-semibold text-slate-700 dark:text-slate-200" onchange="desbloquearStaff('preacher')">
+                            <option value="V">V</option><option value="E">E</option>
+                        </select>
+                        <input class="block w-full rounded-lg border-0 py-1.5 text-sm ring-1 ring-slate-300 dark:bg-slate-800 focus:ring-primary" id="new-service-preacher-cedula" placeholder="12345678" maxlength="8" autocomplete="off" oninput="buscarStaffPorCedula('preacher')" type="text"/>
+                    </div>
+                    <div id="sugg-preacher-cedula" class="absolute z-20 w-full mt-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg hidden max-h-40 overflow-y-auto"></div>
+                </div>
+                <div class="col-span-5 relative">
+                    <input class="block w-full rounded-lg border-0 py-1.5 text-sm ring-1 ring-slate-300 dark:bg-slate-800 focus:ring-primary transition-all" id="new-service-preacher-nombre" placeholder="Nombre Apellido" autocomplete="off" oninput="formatNombreInput(this); buscarStaffPorNombre('preacher')" type="text"/>
+                    <div id="sugg-preacher-nombre" class="absolute z-20 w-full mt-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg hidden max-h-40 overflow-y-auto"></div>
+                </div>
+                <div class="col-span-3 relative">
+                    <select id="new-service-preacher-genero" class="block w-full rounded-lg border-0 py-1.5 text-sm ring-1 ring-slate-300 dark:bg-slate-800 focus:ring-primary font-semibold text-slate-700 dark:text-slate-200">
+                        <option value="M">M</option><option value="F">F</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    
+        <div class="mt-4">
+            <label class="block text-sm font-medium text-slate-900 dark:text-slate-200" for="new-service-guest">Invitado <span class="text-xs text-slate-500 font-normal">(Opcional)</span></label>
+            <input class="block w-full rounded-md border-0 py-2 dark:bg-slate-700 dark:text-white ring-1 ring-slate-300 focus:ring-primary" id="new-service-guest" placeholder="Nombre del invitado" type="text" oninput="formatNombreInput(this)"/>
+        </div>
+    </form>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-slate-50 dark:bg-slate-700/50 px-6 py-4 flex flex-row-reverse gap-2 border-t border-slate-100 dark:border-slate-700">
+    <button id="btn-save-service" class="px-4 py-2 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/20 hover:bg-primary/90 transition-colors" onclick="saveService()" type="button">Guardar Servicio</button>
+<button id="btn-edit-service" class="hidden px-4 py-2 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/20 hover:bg-primary/90 transition-colors" onclick="updateService()" type="button">Guardar Cambios</button>    <button class="px-4 py-2 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold rounded-xl border border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600 transition-colors" onclick="toggleModal('modal-nuevo-servicio')" type="button">Cancelar</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div aria-labelledby="modal-title" aria-modal="true" class="fixed inset-0 z-[60] hidden" id="modal-realizada" role="dialog">
+    <div class="fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity" onclick="toggleModal('modal-realizada')"></div>
+    <div class="fixed inset-0 z-10 overflow-y-auto">
+        <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+            <div class="relative transform overflow-hidden rounded-2xl bg-white dark:bg-slate-800 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-4xl border border-slate-100 dark:border-slate-700 w-full">
+                <form id="form-realizada" onsubmit="submitRealizada(event)">
+                    <div class="p-6">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30 sm:mx-0 sm:h-10 sm:w-10">
+    <span class="material-icons-round text-primary dark:text-blue-400">check_circle</span>
+</div>
+                            <div>
+                                <h3 class="text-lg font-semibold leading-6 text-slate-900 dark:text-white" id="modal-title">Marcar como Realizada</h3>
+                                <p class="text-sm text-slate-500 mt-1">Ingresa los detalles finales de la ejecución del servicio.</p>
+                            </div>
+                        </div>
+                        <div id="realizada-error-msg" class="hidden mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl text-sm text-red-600 dark:text-red-400 font-medium flex items-center gap-2">
+                            <span class="material-icons-round text-lg">error_outline</span>
+                            <span id="realizada-error-text">Mensaje de error</span>
+                        </div>
+
+                        <div class="mt-5 grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-900 dark:text-slate-200 mb-2" for="attendees">Cantidad de Participantes <span class="text-red-500">*</span></label>
+<input class="block w-full rounded-md border-0 py-2 dark:bg-slate-700 dark:text-white ring-1 ring-slate-300 focus:ring-primary" id="attendees" placeholder="Ej. 150" type="number" min="1"/>                                
+                                <label class="block text-sm font-medium text-slate-900 dark:text-slate-200 mt-4 mb-2" for="observations">Observaciones</label>
+                                <textarea class="block w-full rounded-md border-0 py-2 dark:bg-slate-700 dark:text-white ring-1 ring-slate-300 focus:ring-primary" id="observations" placeholder="Escribe detalles importantes..." rows="3"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-900 dark:text-slate-200 mb-2">Foto del Servicio <span class="text-red-500">*</span></label>
+                                <label for="photo-upload" class="cursor-pointer flex justify-center rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-600 p-6 transition-colors hover:border-primary hover:bg-slate-100 dark:hover:bg-slate-800 bg-slate-50 dark:bg-slate-800/50 relative overflow-hidden group">
+                                    <div class="text-center relative w-full h-32 flex flex-col justify-center items-center">
+                                        <div id="upload-placeholder">
+                                            <span class="material-icons-round text-4xl text-slate-300 dark:text-slate-500 mb-2 group-hover:text-primary transition-colors">add_a_photo</span>
+                                            <div class="mt-2 text-sm text-slate-600 dark:text-slate-400 font-semibold group-hover:text-primary transition-colors">
+                                                Subir imagen
+                                            </div>
+                                            
+                                        </div>
+                                        <img id="photo-preview" class="hidden absolute inset-0 w-full h-full object-cover rounded-lg shadow-md mx-auto" src="" alt="Vista previa">
+                                    </div>
+                                    <input class="sr-only" id="photo-upload" name="photo-upload" type="file" accept="image/*" onchange="previewImage(event)"/>
+                                </label>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-slate-900 dark:text-slate-200 mb-2" for="news">Novedades <span class="text-xs text-slate-500 font-normal">(Para Noticias)</span></label>
+                                <textarea class="block w-full rounded-md border-0 py-2 dark:bg-slate-700 dark:text-white ring-1 ring-slate-300 focus:ring-primary" id="news" placeholder="Escribe el resumen para publicar..." rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-slate-700/50 px-6 py-4 flex flex-row-reverse gap-2 border-t border-slate-100 dark:border-slate-700">
+<button class="px-4 py-2 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/20 hover:bg-primary/90 transition-colors flex items-center justify-center gap-2" type="submit">                            <span class="material-icons-round text-sm">check_circle</span> Finalizar y Publicar
+                        </button>
+                        <button class="px-4 py-2 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold rounded-xl border border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600 transition-colors" onclick="toggleModal('modal-realizada')" type="button">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div aria-labelledby="modal-title-details" aria-modal="true" class="fixed inset-0 z-[60] hidden" id="modal-detalles" role="dialog">
+<div class="fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity" onclick="toggleModal('modal-detalles')"></div>
+<div class="fixed inset-0 z-10 overflow-y-auto">
+<div class="flex min-h-full items-center justify-center p-4 text-center">
+<div class="relative transform overflow-hidden rounded-2xl bg-white dark:bg-slate-800 text-left shadow-xl transition-all sm:w-full sm:max-w-lg border border-slate-100 dark:border-slate-700">
+<div class="px-6 py-4 border-b border-slate-100 dark:border-slate-700">
+<h3 class="text-lg font-bold text-slate-900 dark:text-white" id="detail-title">Detalles del Servicio</h3>
+<p class="text-sm text-slate-500 dark:text-slate-400">Información registrada</p>
+</div>
+<div class="p-6 space-y-4">
+<div class="bg-slate-50 dark:bg-slate-700/50 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
+<span class="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Asistencia Total</span>
+<span class="text-3xl font-bold text-slate-900 dark:text-white" id="detail-attendees">0</span>
+<span class="text-sm text-slate-500 dark:text-slate-400 ml-1">personas</span>
+</div>
+<div>
+<h4 class="text-sm font-semibold text-slate-900 dark:text-white mb-2">Observaciones</h4>
+<p class="text-sm text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-700/30 p-3 rounded-lg border border-slate-100 dark:border-slate-700" id="detail-observations">
+                                --
+                            </p>
+</div>
+<div>
+<h4 class="text-sm font-semibold text-slate-900 dark:text-white mb-2">Novedades</h4>
+<p class="text-sm text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-700/30 p-3 rounded-lg border border-slate-100 dark:border-slate-700" id="detail-news">
+                                --
+                            </p>
+</div>
+</div>
+<div class="px-6 py-4 bg-slate-50 dark:bg-slate-700/50 flex justify-end">
+<button class="inline-flex w-full justify-center rounded-lg bg-white dark:bg-slate-700 px-4 py-2 text-sm font-semibold text-slate-900 dark:text-slate-200 shadow-sm ring-1 ring-inset ring-slate-300 dark:ring-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600 sm:w-auto" onclick="toggleModal('modal-detalles')" type="button">Cerrar</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<script th:src="@{/js/main.js}"></script>
+<script th:src="@{/js/servicios.js}"></script>
+</body>
+</html>

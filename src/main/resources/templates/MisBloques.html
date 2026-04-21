@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Mis Bloques - Portal Académico</title>
+    
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+    
+    <link rel="stylesheet" th:href="@{/css/global.css}" />
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 transition-colors duration-200 min-h-screen flex relative">
+
+    <div class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 hidden lg:hidden" id="overlay" onclick="toggleMobileMenu()"></div>
+
+    <aside class="fixed lg:static top-0 left-0 h-full w-72 bg-white dark:bg-slate-900 z-50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out ios-shadow border-r border-slate-200 dark:border-slate-800 flex-shrink-0" id="side-menu">
+        <div class="p-6 flex flex-col h-full">
+            <div class="flex items-center justify-between mb-8">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                        <span class="material-icons-round text-white text-lg">local_library</span>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Académico</span>
+                </div>
+                <button class="p-2 lg:hidden" onclick="toggleMobileMenu()">
+                    <span class="material-icons-round">close</span>
+                </button>
+            </div>
+            
+            <nav class="space-y-1 flex-1 overflow-y-auto no-scrollbar">
+                <a class="flex items-center gap-4 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors" href="/">
+                    <span class="material-icons-round">newspaper</span>
+                    <span>Noticia</span>
+                </a>
+
+                <a class="flex items-center gap-4 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors" href="/estudios">
+                    <span class="material-icons-round">school</span>
+                    <span>Estudios</span>
+                </a>
+
+                <a class="flex items-center gap-4 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors" href="/usuarios">
+                    <span class="material-icons-round">people</span>
+                    <span>Gestión Usuario</span>
+                </a>
+
+                <div class="submenu-container">
+                    <button class="w-full flex items-center justify-between px-4 py-3 text-slate-600 dark:text-slate-400 font-medium rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800" onclick="toggleSubmenu('bloques-submenu')">
+                        <div class="flex items-center gap-4">
+                            <span class="material-icons-round">history_edu</span>
+                            <span>Bloques y Tips</span>
+                        </div>
+                        <span class="material-icons-round text-slate-400" id="bloques-submenu-arrow">expand_more</span>
+                    </button>
+                    <div class="submenu-transition overflow-hidden max-h-0 opacity-0 transition-all duration-300" id="bloques-submenu">
+                        <div class="pl-12 space-y-1 pt-1">
+                            <a class="block py-2 text-sm text-slate-500 hover:text-primary" href="/bloquesytips">Gestión</a>
+                            <a class="block py-2 text-sm text-slate-500 hover:text-primary" href="/clasesimpartiendo">Clases</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="submenu-container">
+                    <button class="w-full flex items-center justify-between px-4 py-3 text-slate-600 dark:text-slate-400 font-medium rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800" onclick="toggleSubmenu('teologia-submenu')">
+                        <div class="flex items-center gap-4">
+                            <span class="material-icons-round">menu_book</span>
+                            <span>Teología</span>
+                        </div>
+                        <span class="material-icons-round text-slate-400" id="teologia-submenu-arrow">expand_more</span>
+                    </button>
+                    <div class="submenu-transition overflow-hidden max-h-0 opacity-0 transition-all duration-300" id="teologia-submenu">
+                        <div class="pl-12 space-y-1 pt-1">
+                            <a class="block py-2 text-sm text-slate-500 hover:text-primary" href="/teologia">Gestión de Teología</a>
+                            <a class="block py-2 text-sm text-slate-500 hover:text-primary" href="/clases-teologia">Clases de Teología</a>
+                        </div>
+                    </div>
+                </div>
+
+                <a class="flex items-center gap-4 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors" href="/reportes">
+                    <span class="material-icons-round">analytics</span>
+                    <span>Reportes</span>
+                </a>
+            </nav>
+            
+            <div class="pt-6 mt-auto border-t border-slate-100 dark:border-slate-800">
+                <button class="w-full flex items-center gap-4 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors" onclick="toggleDarkMode()">
+                    <span class="material-icons-round dark:hidden">dark_mode</span>
+                    <span class="material-icons-round hidden dark:block text-yellow-500">light_mode</span>
+                    <span>Modo Visual</span>
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+        <header class="sticky top-0 z-30 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 px-6 py-4 flex items-center justify-between">
+            <button class="p-2 lg:hidden" onclick="toggleMobileMenu()">
+                <span class="material-icons-round">menu</span>
+            </button>
+            <h1 class="text-xl font-bold text-slate-900 dark:text-white">Mis Bloques de Estudio</h1>
+            <div id="user-header-section"></div>
+        </header>
+
+        <main class="flex-1 overflow-y-auto p-6 md:p-10 no-scrollbar">
+            <div class="max-w-5xl mx-auto">
+                <div id="mis-bloques-container" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="col-span-full flex flex-col items-center justify-center p-12 text-slate-400">
+                        <span class="material-icons-round text-5xl animate-spin mb-4">refresh</span>
+                        <p class="font-medium">Cargando tus bloques...</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script th:src="@{/js/main.js}"></script>
+    <script th:src="@{/js/misbloques.js}"></script>
+</body>
+</html>

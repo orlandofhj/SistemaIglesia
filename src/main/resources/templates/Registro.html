@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html class="light" lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Crear Perfil - Portal de la Iglesia</title>
+    
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+    
+    <link rel="stylesheet" th:href="@{/css/global.css}" />
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 transition-colors duration-200 min-h-screen flex items-center justify-center p-4 relative">
+    
+    <button class="absolute top-6 right-6 p-3 bg-white dark:bg-slate-800 rounded-full ios-shadow text-slate-600 dark:text-slate-300 hover:text-primary transition-colors border border-slate-100 dark:border-slate-700" onclick="toggleDarkMode()">
+        <span class="material-icons-round dark:hidden">dark_mode</span>
+        <span class="material-icons-round hidden dark:block text-yellow-500">light_mode</span>
+    </button>
+
+    <div class="w-full max-w-lg bg-white dark:bg-slate-800 rounded-3xl p-8 ios-shadow border border-slate-100 dark:border-slate-700">
+        <div class="text-center mb-6">
+            <h2 class="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Crear Perfil</h2>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Completa los datos para registrarte en el sistema.</p>
+        </div>
+
+        <form class="space-y-5" id="form-registro" onsubmit="procesarRegistro(event)">
+            
+            <div>
+                <label class="block text-sm font-medium leading-6 text-slate-900 dark:text-slate-200 mb-2">Cédula de Identidad</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <span class="material-icons-round text-slate-400 text-lg">badge</span>
+                    </div>
+                    <input class="block w-full pl-10 pr-3 py-2.5 rounded-xl border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white shadow-sm focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm transition-colors" id="reg-cedula" type="number" placeholder="Ej: 12345678" required/>
+                </div>
+                <p class="text-xs text-slate-500 mt-1" id="hint-cedula">Debes haber sido registrado previamente en la iglesia.</p>
+                <p class="text-xs text-red-500 font-bold mt-1 hidden" id="error-cedula"></p>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium leading-6 text-slate-900 dark:text-slate-200 mb-2">Correo Electrónico</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <span class="material-icons-round text-slate-400 text-lg">email</span>
+                    </div>
+                    <input class="block w-full pl-10 pr-3 py-2.5 rounded-xl border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white shadow-sm focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm transition-colors" id="reg-correo" type="email" placeholder="tu@correo.com" required/>
+                </div>
+                <p class="text-xs text-red-500 font-bold mt-1 hidden" id="error-correo"></p>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-slate-900 dark:text-slate-200 mb-2">Usuario</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <span class="material-icons-round text-slate-400 text-lg">person</span>
+                    </div>
+                    <input class="block w-full pl-10 pr-3 py-2.5 rounded-xl border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white shadow-sm focus:ring-2 focus:ring-primary sm:text-sm transition-colors" id="new-username" type="text" placeholder="Crea un nombre de usuario" required/>
+                </div>
+                <p class="text-xs text-red-500 font-bold mt-1 hidden" id="error-usuario"></p>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-slate-900 dark:text-slate-200 mb-2">Contraseña</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <span class="material-icons-round text-slate-400 text-lg">lock</span>
+                    </div>
+                    <input class="block w-full pl-10 pr-10 py-2.5 rounded-xl border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white shadow-sm focus:ring-2 focus:ring-primary sm:text-sm" id="new-password" type="password" placeholder="Crea una contraseña segura" oninput="validatePassword()" required/>
+                    
+                    <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center" onclick="togglePassword()">
+                        <span class="material-icons-round text-slate-400 hover:text-slate-600" id="eye-icon-reg">visibility</span>
+                    </button>
+                </div>
+                
+                <div class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                    <div id="req-length" class="flex items-center gap-1.5 text-slate-500"><span class="material-icons-round text-[14px]">radio_button_unchecked</span> Mín. 8 caracteres</div>
+                    <div id="req-upper" class="flex items-center gap-1.5 text-slate-500"><span class="material-icons-round text-[14px]">radio_button_unchecked</span> Una mayúscula</div>
+                    <div id="req-number" class="flex items-center gap-1.5 text-slate-500"><span class="material-icons-round text-[14px]">radio_button_unchecked</span> Un número</div>
+                    <div id="req-symbol" class="flex items-center gap-1.5 text-slate-500"><span class="material-icons-round text-[14px]">radio_button_unchecked</span> Un signo especial</div>
+                </div>
+            </div>
+
+            <div id="mensaje-respuesta" class="text-center font-bold text-sm hidden"></div>
+
+            <button class="w-full flex justify-center py-3 px-4 rounded-xl shadow-sm text-sm font-bold text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors mt-4" type="submit">
+                Registrar Cuenta
+            </button>
+        </form>
+
+        <div class="mt-6 pt-5 border-t border-slate-100 dark:border-slate-700 text-center">
+            <p class="text-sm text-slate-600 dark:text-slate-400">
+                ¿Ya tienes una cuenta? 
+                <a href="/login" class="font-bold text-primary hover:underline">Iniciar Sesión</a>
+            </p>
+        </div>
+    </div>
+    
+    <div id="modal-success" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title-success" role="dialog" aria-modal="true">
+        <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"></div>
+        <div class="fixed inset-0 z-10 overflow-y-auto">
+            <div class="flex min-h-full items-center justify-center p-4 text-center">
+                <div class="relative transform overflow-hidden rounded-3xl bg-white dark:bg-slate-800 text-left shadow-2xl transition-all w-full max-w-sm border border-slate-100 dark:border-slate-700">
+                    <div class="p-8 text-center">
+                        <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30 mb-5">
+                            <span class="material-icons-round text-4xl text-green-600 dark:text-green-400">check_circle</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2" id="modal-title-success">¡Registro Exitoso!</h3>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">Tu cuenta ha sido creada correctamente. Ahora puedes iniciar sesión.</p>
+                    </div>
+                    <div class="px-6 py-5 bg-slate-50 dark:bg-slate-700/50 border-t border-slate-100 dark:border-slate-700">
+                        <button type="button" class="w-full flex justify-center py-3 px-4 rounded-xl shadow-sm text-sm font-bold text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors" onclick="redirectToLogin()">
+                            Aceptar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="fixed inset-0 z-[90] hidden" id="modal-verificacion-correo">
+        <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"></div>
+        <div class="fixed inset-0 z-10 overflow-y-auto">
+            <div class="flex min-h-full items-center justify-center p-4 text-center">
+                <div class="relative transform overflow-hidden rounded-3xl bg-white dark:bg-slate-800 text-left shadow-2xl transition-all w-full max-w-sm border border-slate-100 dark:border-slate-700">
+                    <div class="p-6 text-center">
+                        <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-blue-50 dark:bg-blue-900/30 mb-4">
+                            <span class="material-icons-round text-3xl text-primary dark:text-blue-400">mark_email_read</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Verifica tu Correo</h3>
+                        <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">
+                            Para crear tu cuenta, ingresa el código de 6 dígitos que enviamos a <br>
+                            <strong class="text-slate-700 dark:text-slate-300" id="verify-email-display">tu correo</strong>.
+                        </p>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <input type="text" id="verification-code" maxlength="6" class="w-full text-center text-3xl tracking-[0.5em] font-bold rounded-xl border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white py-4 focus:ring-primary focus:border-primary placeholder:text-slate-300 dark:placeholder:text-slate-600" placeholder="------" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                            </div>
+                            <p class="text-sm text-red-500 font-medium hidden" id="verify-error-msg"></p>
+                        </div>
+                    </div>
+                    <div class="px-6 py-4 bg-slate-50 dark:bg-slate-700/50 flex gap-3 border-t border-slate-100 dark:border-slate-700">
+                        <button class="w-full py-2.5 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold rounded-xl border border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600 transition-colors" onclick="cancelarVerificacion()">Cancelar</button>
+                        <button class="w-full py-2.5 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/20 hover:bg-primary/90 transition-colors" onclick="confirmarCodigoRegistro()">Verificar y Crear</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/js/main.js}"></script>
+    <script th:src="@{/js/registro.js}"></script>
+</body>
+</html>

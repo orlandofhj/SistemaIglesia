@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html class="light" lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Configuración de Perfil</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+    
+    <link rel="stylesheet" th:href="@{/css/global.css}" />
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 transition-colors duration-200 min-h-screen flex">
+
+    <div class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 hidden lg:hidden" id="overlay" onclick="toggleMobileMenu()"></div>
+
+    <aside class="fixed lg:static top-0 left-0 h-full w-72 bg-white dark:bg-slate-900 z-50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out ios-shadow border-r border-slate-200 dark:border-slate-800 flex-shrink-0" id="side-menu">
+        <div class="p-6 flex flex-col h-full">
+            <div class="flex items-center justify-between mb-8">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                        <span class="material-icons-round text-white text-lg">admin_panel_settings</span>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Gestión</span>
+                </div>
+                <button class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full lg:hidden" onclick="toggleMobileMenu()">
+                    <span class="material-icons-round">close</span>
+                </button>
+            </div>
+            
+            <nav class="space-y-1 flex-1 overflow-y-auto no-scrollbar">
+    <a class="flex items-center gap-4 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors" href="/">
+        <span class="material-icons-round">newspaper</span>
+        <span>Noticia</span>
+    </a>
+    
+    <a class="flex items-center gap-4 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors" href="/mis-ministerios">
+        <span class="material-icons-round">groups</span>
+        <span>Mis Ministerios</span>
+    </a>
+    
+    <a class="flex items-center gap-4 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors" href="/estudios">
+        <span class="material-icons-round">school</span>
+        <span>Estudios</span>
+    </a>
+
+    <a class="flex items-center gap-4 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors" href="/usuarios">
+        <span class="material-icons-round">people</span>
+        <span>Gestión Usuario</span>
+    </a>
+    
+    <a class="flex items-center gap-4 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors" href="/servicios">
+        <span class="material-icons-round">volunteer_activism</span>
+        <span>Gestión Servicios</span>
+    </a>
+    
+    <a class="flex items-center gap-4 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors" href="/eventos">
+        <span class="material-icons-round">event</span>
+        <span>Gestión Eventos</span>
+    </a>
+    
+    <a class="flex items-center gap-4 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors" href="/ministerios">
+        <span class="material-icons-round">diversity_3</span>
+        <span>Gestión Ministerios</span>
+    </a>
+    
+    <div class="submenu-container rounded-xl overflow-hidden transition-colors duration-200 hover:bg-slate-50 dark:hover:bg-slate-800/50">
+        <button class="w-full flex items-center justify-between px-4 py-3 text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-white font-medium rounded-xl transition-colors" onclick="toggleSubmenu('bloques-submenu')">
+            <div class="flex items-center gap-4">
+                <span class="material-icons-round">history_edu</span>
+                <span>Bloques y Tips</span>
+            </div>
+            <span class="material-icons-round text-slate-400 transition-transform duration-300" id="bloques-submenu-arrow">expand_more</span>
+        </button>
+        <div class="submenu-transition overflow-hidden max-h-0 opacity-0 transition-all duration-300" id="bloques-submenu">
+            <div class="pl-12 pr-4 pb-2 space-y-1 pt-1">
+                <a class="block py-2 text-sm text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary transition-colors flex items-center gap-2" href="/bloquesytips">
+                    <span class="w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-slate-600"></span>
+                    Gestión de Bloques
+                </a>
+                <a class="block py-2 text-sm text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary transition-colors flex items-center gap-2" href="/clasesimpartiendo">
+                    <span class="w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-slate-600"></span>
+                    Clases Impartiendo
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="submenu-container rounded-xl overflow-hidden transition-colors duration-200 hover:bg-slate-50 dark:hover:bg-slate-800/50">
+        <button class="w-full flex items-center justify-between px-4 py-3 text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-white font-medium rounded-xl transition-colors" onclick="toggleSubmenu('teologia-submenu')">
+            <div class="flex items-center gap-4">
+                <span class="material-icons-round">menu_book</span>
+                <span>Teología</span>
+            </div>
+            <span class="material-icons-round text-slate-400 transition-transform duration-300" id="teologia-submenu-arrow">expand_more</span>
+        </button>
+        <div class="submenu-transition overflow-hidden max-h-0 opacity-0 transition-all duration-300" id="teologia-submenu">
+            <div class="pl-12 pr-4 pb-2 space-y-1 pt-1">
+                <a class="block py-2 text-sm text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary transition-colors flex items-center gap-2" href="/teologia">
+                    <span class="w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-slate-600"></span>
+                    Gestión de Teología
+                </a>
+                <a class="block py-2 text-sm text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary transition-colors flex items-center gap-2" href="/clases-teologia">
+                    <span class="w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-slate-600"></span>
+                    Clases de Teología
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <a class="flex items-center gap-4 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors" href="/reportes">
+        <span class="material-icons-round">analytics</span>
+        <span>Reportes</span>
+    </a>
+</nav>
+            <div class="pt-6 mt-auto border-t border-slate-100 dark:border-slate-800">
+                <button class="w-full flex items-center gap-4 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors" onclick="toggleDarkMode()">
+                    <span class="material-icons-round dark:hidden">dark_mode</span>
+                    <span class="material-icons-round hidden dark:block text-yellow-500">light_mode</span>
+                    <span>Modo Visual</span>
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden relative z-0">
+        
+        <header class="sticky top-0 z-30 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 px-6 py-4">
+            <div class="flex items-center justify-between w-full">
+                <div class="flex items-center gap-4">
+                    <button class="p-2 text-slate-600 dark:text-slate-400 lg:hidden" onclick="toggleMobileMenu()">
+                        <span class="material-icons-round">menu</span>
+                    </button>
+                    <div class="hidden lg:block">
+                        <h1 class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Ajustes de Cuenta</h1>
+                    </div>
+                    <h1 class="text-lg font-semibold tracking-tight text-slate-900 dark:text-white lg:hidden">Ajustes</h1>
+                </div>
+                
+                <div id="user-header-section" class="flex-1 flex justify-end relative z-50">
+                    </div>
+            </div>
+        </header>
+
+        <main class="flex-1 overflow-y-auto p-6 lg:p-10 no-scrollbar">
+            <div class="max-w-3xl mx-auto">
+                <div class="mb-8">
+                    <h2 class="text-3xl font-bold dark:text-white tracking-tight">Configuración de Perfil</h2>
+                    <p class="text-slate-500 dark:text-slate-400 mt-1">Administra tu información personal y credenciales de acceso.</p>
+                </div>
+
+                <div class="bg-white dark:bg-slate-800 rounded-3xl overflow-hidden ios-shadow border border-slate-100 dark:border-slate-700">
+                    <div class="p-6 sm:p-8">
+                        
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-8 pb-8 border-b border-slate-100 dark:border-slate-700">
+                            <div class="relative w-24 h-24 rounded-full bg-slate-100 dark:bg-slate-700 overflow-hidden group shadow-sm border border-slate-200 dark:border-slate-600 flex-shrink-0" id="main-avatar-container">
+                                </div>
+                            
+                            <div>
+                                <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-1">Foto de Perfil</h3>
+                                <p class="text-sm text-slate-500 dark:text-slate-400 mb-3">Recomendamos una imagen cuadrada (Máx. 2MB).</p>
+                                
+                                <label for="avatar-upload" class="inline-flex items-center px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-sm font-semibold text-slate-700 dark:text-slate-200 rounded-lg cursor-pointer transition-colors">
+                                    Cambiar foto
+                                </label>
+                                <input type="file" id="avatar-upload" class="hidden" accept="image/*" onchange="uploadAvatar(event)">
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Información de la Cuenta</h3>
+
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
+                                <div>
+                                    <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Usuario</p>
+                                    <p class="text-base font-semibold text-slate-900 dark:text-white mt-0.5" id="display-username">Cargando...</p>
+                                </div>
+                                <button class="mt-3 sm:mt-0 px-4 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-sm font-semibold text-primary dark:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-600 transition-colors" onclick="toggleModal('modal-username')">
+                                    Cambiar Usuario
+                                </button>
+                            </div>
+
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
+    <div>
+        <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Correo Electrónico</p>
+        <div class="flex items-center gap-2 mt-0.5">
+            <p class="text-base font-semibold text-slate-900 dark:text-white" id="display-email">Cargando...</p>
+            <span id="badge-verificado" class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase hidden"></span>
+        </div>
+    </div>
+    <button class="mt-3 sm:mt-0 px-4 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-sm font-semibold text-primary dark:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-600 transition-colors" onclick="toggleModal('modal-email')">
+        Cambiar Correo
+    </button>
+</div>
+
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
+                                <div>
+                                    <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Contraseña</p>
+                                    <p class="text-base font-semibold text-slate-900 dark:text-white mt-0.5">••••••••••••</p>
+                                </div>
+                                <button class="mt-3 sm:mt-0 px-4 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-sm font-semibold text-primary dark:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-600 transition-colors" onclick="toggleModal('modal-password')">
+                                    Cambiar Clave
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="fixed inset-0 z-[60] hidden" id="modal-username">
+        <div class="fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity" onclick="toggleModal('modal-username')"></div>
+        <div class="fixed inset-0 z-10 overflow-y-auto">
+            <div class="flex min-h-full items-center justify-center p-4 text-center">
+                <div class="relative transform overflow-hidden rounded-2xl bg-white dark:bg-slate-800 text-left shadow-xl transition-all w-full max-w-md border border-slate-100 dark:border-slate-700">
+                    <div class="p-6">
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Cambiar Nombre de Usuario</h3>
+                        <p class="text-sm text-red-500 mb-3 hidden error-msg"></p>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Nuevo Usuario</label>
+                                <input type="text" id="mod-user-1" class="w-full rounded-xl border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white sm:text-sm focus:ring-primary focus:border-primary">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Confirmar Usuario</label>
+                                <input type="text" id="mod-user-2" class="w-full rounded-xl border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white sm:text-sm focus:ring-primary focus:border-primary">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-slate-700/50 px-6 py-4 flex flex-row-reverse gap-3">
+                        <button class="px-4 py-2 bg-primary hover:bg-primary/90 text-white rounded-lg text-sm font-semibold shadow-sm" onclick="askConfirm('username')">Guardar</button>
+                        <button class="px-4 py-2 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-600 rounded-lg text-sm font-semibold hover:bg-slate-50 dark:hover:bg-slate-600" onclick="toggleModal('modal-username')">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed inset-0 z-[60] hidden" id="modal-email">
+        <div class="fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity" onclick="toggleModal('modal-email')"></div>
+        <div class="fixed inset-0 z-10 overflow-y-auto">
+            <div class="flex min-h-full items-center justify-center p-4 text-center">
+                <div class="relative transform overflow-hidden rounded-2xl bg-white dark:bg-slate-800 text-left shadow-xl transition-all w-full max-w-md border border-slate-100 dark:border-slate-700">
+                    <div class="p-6">
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Cambiar Correo Electrónico</h3>
+                        <p class="text-sm text-red-500 mb-3 hidden error-msg"></p>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Nuevo Correo</label>
+                                <input type="email" id="mod-email-1" class="w-full rounded-xl border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white sm:text-sm focus:ring-primary focus:border-primary">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Confirmar Correo</label>
+                                <input type="email" id="mod-email-2" class="w-full rounded-xl border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white sm:text-sm focus:ring-primary focus:border-primary">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-slate-700/50 px-6 py-4 flex flex-row-reverse gap-3">
+                        <button class="px-4 py-2 bg-primary hover:bg-primary/90 text-white rounded-lg text-sm font-semibold shadow-sm" onclick="askConfirm('email')">Guardar</button>
+                        <button class="px-4 py-2 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-600 rounded-lg text-sm font-semibold hover:bg-slate-50 dark:hover:bg-slate-600" onclick="toggleModal('modal-email')">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed inset-0 z-[60] hidden" id="modal-password">
+        <div class="fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity" onclick="toggleModal('modal-password')"></div>
+        <div class="fixed inset-0 z-10 overflow-y-auto">
+            <div class="flex min-h-full items-center justify-center p-4 text-center">
+                <div class="relative transform overflow-hidden rounded-2xl bg-white dark:bg-slate-800 text-left shadow-xl transition-all w-full max-w-md border border-slate-100 dark:border-slate-700">
+                    <div class="p-6">
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Cambiar Contraseña</h3>
+                        <p class="text-sm text-red-500 mb-3 hidden error-msg"></p>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Nueva Contraseña</label>
+                                <div class="relative">
+                                    <input type="password" id="mod-pass-1" onkeyup="validatePasswordConfig()" class="w-full pr-10 rounded-xl border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white sm:text-sm focus:ring-primary focus:border-primary">
+                                    <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-300" onclick="toggleModalPassword('mod-pass-1', 'eye-mod-1')">
+                                        <span class="material-icons-round text-xl" id="eye-mod-1">visibility</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-50 dark:bg-slate-900/50 p-3 rounded-lg border border-slate-100 dark:border-slate-700">
+                                <div class="grid grid-cols-2 gap-2 text-xs">
+                                    <div id="req-length" class="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
+                                        <span class="material-icons-round text-[14px]">radio_button_unchecked</span> Mínimo 8 caracteres
+                                    </div>
+                                    <div id="req-upper" class="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
+                                        <span class="material-icons-round text-[14px]">radio_button_unchecked</span> Una mayúscula
+                                    </div>
+                                    <div id="req-number" class="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
+                                        <span class="material-icons-round text-[14px]">radio_button_unchecked</span> Un número
+                                    </div>
+                                    <div id="req-symbol" class="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
+                                        <span class="material-icons-round text-[14px]">radio_button_unchecked</span> Un signo especial
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Confirmar Contraseña</label>
+                                <div class="relative">
+                                    <input type="password" id="mod-pass-2" class="w-full pr-10 rounded-xl border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white sm:text-sm focus:ring-primary focus:border-primary">
+                                    <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-300" onclick="toggleModalPassword('mod-pass-2', 'eye-mod-2')">
+                                        <span class="material-icons-round text-xl" id="eye-mod-2">visibility</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-slate-700/50 px-6 py-4 flex flex-row-reverse gap-3">
+                        <button class="px-4 py-2 bg-primary hover:bg-primary/90 text-white rounded-lg text-sm font-semibold shadow-sm" onclick="askConfirm('password')">Guardar Clave</button>
+                        <button class="px-4 py-2 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-600 rounded-lg text-sm font-semibold hover:bg-slate-50 dark:hover:bg-slate-600" onclick="toggleModal('modal-password')">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="fixed inset-0 z-[70] hidden" id="modal-global-confirm">
+        <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onclick="closeConfirmModal()"></div>
+        <div class="fixed inset-0 z-10 overflow-y-auto">
+            <div class="flex min-h-full items-center justify-center p-4 text-center">
+                <div class="relative transform overflow-hidden rounded-2xl bg-white dark:bg-slate-800 text-left shadow-2xl transition-all w-full max-w-sm border border-slate-100 dark:border-slate-700">
+                    <div class="p-6 text-center">
+                        <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30 mb-5">
+                            <span class="material-icons-round text-3xl text-primary dark:text-blue-400">help_outline</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">Confirmación</h3>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">¿Está seguro de que desea aplicar estos cambios?</p>
+                    </div>
+                    <div class="px-6 py-4 bg-slate-50 dark:bg-slate-700/50 flex gap-3 justify-center border-t border-slate-100 dark:border-slate-700">
+                        <button class="w-full px-4 py-2.5 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold rounded-xl border border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600" onclick="closeConfirmModal()">No</button>
+                        <button class="w-full px-4 py-2.5 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/20 hover:bg-primary/90" id="btn-confirm-yes" onclick="executeAction()">Sí, guardar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed inset-0 z-[80] hidden" id="modal-global-success">
+        <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"></div>
+        <div class="fixed inset-0 z-10 overflow-y-auto">
+            <div class="flex min-h-full items-center justify-center p-4 text-center">
+                <div class="relative transform overflow-hidden rounded-2xl bg-white dark:bg-slate-800 text-left shadow-2xl transition-all w-full max-w-sm border border-slate-100 dark:border-slate-700">
+                    <div class="p-6 text-center">
+                        <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30 mb-5">
+                            <span class="material-icons-round text-3xl text-green-600 dark:text-green-400">check_circle</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">¡Éxito!</h3>
+                        <p class="text-sm text-slate-500 dark:text-slate-400" id="success-message">Los cambios se han guardado correctamente.</p>
+                    </div>
+                    <div class="px-6 py-4 bg-slate-50 dark:bg-slate-700/50 flex justify-center border-t border-slate-100 dark:border-slate-700">
+                        <button class="w-full px-4 py-2.5 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/20 hover:bg-primary/90" onclick="closeSuccessModal()">Aceptar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="fixed inset-0 z-[90] hidden" id="modal-verificacion-correo">
+        <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"></div>
+        <div class="fixed inset-0 z-10 overflow-y-auto">
+            <div class="flex min-h-full items-center justify-center p-4 text-center">
+                <div class="relative transform overflow-hidden rounded-3xl bg-white dark:bg-slate-800 text-left shadow-2xl transition-all w-full max-w-sm border border-slate-100 dark:border-slate-700">
+                    <div class="p-6 text-center">
+                        <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-blue-50 dark:bg-blue-900/30 mb-4">
+                            <span class="material-icons-round text-3xl text-primary dark:text-blue-400">mark_email_read</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Verifica tu Correo</h3>
+                        <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">
+                            Hemos enviado un código de 6 dígitos a <br>
+                            <strong class="text-slate-700 dark:text-slate-300" id="verify-email-display">tu nuevo correo</strong>.
+                        </p>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <input type="text" id="verification-code" maxlength="6" class="w-full text-center text-3xl tracking-[0.5em] font-bold rounded-xl border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white py-4 focus:ring-primary focus:border-primary placeholder:text-slate-300 dark:placeholder:text-slate-600" placeholder="------" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                            </div>
+                            <p class="text-sm text-red-500 font-medium hidden" id="verify-error-msg"></p>
+                        </div>
+                    </div>
+                    <div class="px-6 py-4 bg-slate-50 dark:bg-slate-700/50 flex gap-3 border-t border-slate-100 dark:border-slate-700">
+                        <button class="w-full py-2.5 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold rounded-xl border border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600 transition-colors" onclick="cancelarVerificacion()">Cancelar</button>
+                        <button class="w-full py-2.5 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/20 hover:bg-primary/90 transition-colors" onclick="confirmarCodigoCorreo()">Verificar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/js/main.js}"></script>
+    <script th:src="@{/js/configperfil.js}"></script>
+</body>
+</html>
