@@ -12,7 +12,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 async function fetchMinisterios() {
     try {
-        const response = await fetch('http://localhost:8080/api/ministerios/todos');
+        const response = await fetch('/api/ministerios/todos');
         if (response.ok) {
             const data = await response.json();
             ministriesData = {};
@@ -32,7 +32,7 @@ async function fetchMinisterios() {
 
 async function fetchStaffGlobal() {
     try {
-        const response = await fetch('http://localhost:8080/api/usuarios/todos');
+        const response = await fetch('/api/usuarios/todos');
         if (response.ok) staffDB = await response.json();
     } catch (error) { console.error("Error cargando personal:", error); }
 }
@@ -382,7 +382,7 @@ async function saveMinistry() {
     };
 
     try {
-        const response = await fetch('http://localhost:8080/api/ministerios/guardar', {
+        const response = await fetch('/api/ministerios/guardar', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
@@ -496,7 +496,7 @@ document.addEventListener('click', (e) => {
 // ⚡ NUEVA FUNCIÓN PARA CAMBIAR ESTADO
 async function toggleMinistryStatus(id, currentStatus) {
     try {
-        const response = await fetch(`http://localhost:8080/api/ministerios/${id}/estado`, {
+        const response = await fetch(`/api/ministerios/${id}/estado`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ activo: !currentStatus })
