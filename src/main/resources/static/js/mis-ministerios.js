@@ -7,7 +7,7 @@ async function cargarMisMinisterios() {
     if (!session || !session.username) return;
 
     try {
-        const response = await fetch(`http://localhost:8080/api/ministerios/mis-ministerios/${session.username}`);
+        const response = await fetch(`/api/ministerios/mis-ministerios/${session.username}`);
         if (response.ok) {
             const data = await response.json();
             renderResponsable(data.comoResponsable);
