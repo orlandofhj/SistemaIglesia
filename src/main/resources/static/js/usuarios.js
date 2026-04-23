@@ -16,7 +16,7 @@ async function fetchUsuarios() {
         // ⚡ Le pasamos el nombre del usuario conectado a Java para que lo excluya ⚡
         const usernameQuery = sessionData && sessionData.username ? `?currentUser=${sessionData.username}` : '';
         
-        const response = await fetch(`http://localhost:8080/api/usuarios/todos${usernameQuery}`, { 
+        const response = await fetch(`/api/usuarios/todos${usernameQuery}`, { 
             cache: 'no-store',
             headers: { 'Pragma': 'no-cache' }
         });
@@ -96,7 +96,7 @@ function toggleUserStatus(userId, currentState) {
 async function proceedToggleStatus(userId, currentState) {
     const nuevoEstado = currentState === 'Activo' ? 'Bloqueado' : 'Activo';
     try {
-        const response = await fetch(`http://localhost:8080/api/usuarios/${userId}/cambiar-estado`, {
+        const response = await fetch(`/api/usuarios/${userId}/cambiar-estado`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
@@ -171,7 +171,7 @@ async function proceedSaveUser(payload) {
     if (payload.id) {
         // ES UNA EDICIÓN
         try {
-            const response = await fetch(`http://localhost:8080/api/usuarios/admin/modificar/${payload.id}`, {
+            const response = await fetch(`/api/usuarios/admin/modificar/${payload.id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
@@ -192,7 +192,7 @@ async function proceedSaveUser(payload) {
     } else {
         // ES UNA CREACIÓN NUEVA
         try {
-            const response = await fetch(`http://localhost:8080/api/usuarios/admin/crear`, {
+            const response = await fetch(`/api/usuarios/admin/crear`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
