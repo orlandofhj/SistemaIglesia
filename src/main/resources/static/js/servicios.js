@@ -18,7 +18,7 @@ function formatDateToES(isoDate) {
 
 async function fetchServicios() {
     try {
-        const response = await fetch('http://localhost:8080/api/servicios/todos');
+        const response = await fetch('api/servicios/todos');
         if (response.ok) {
             const data = await response.json();
             servicesData = {};
@@ -50,7 +50,7 @@ async function fetchServicios() {
 
 async function fetchStaffGlobal() {
     try {
-        const response = await fetch('http://localhost:8080/api/usuarios/todos');
+        const response = await fetch('/api/usuarios/todos');
         if (response.ok) staffDB = await response.json();
     } catch (error) { console.error("Error staff:", error); }
 }
@@ -118,7 +118,7 @@ async function openEditModal(cardKey) {
     document.getElementById('new-service-guest').value = srv.guest || '';
 
     try {
-        const response = await fetch(`http://localhost:8080/api/servicios/${srv.id}/cedulas`);
+        const response = await fetch(`/api/servicios/${srv.id}/cedulas`);
         if (response.ok) {
             const cedulas = await response.json();
             
@@ -209,7 +209,7 @@ async function saveService() {
     }
 
     try {
-        const response = await fetch('http://localhost:8080/api/servicios/crear', {
+        const response = await fetch('/api/servicios/crear', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
@@ -241,7 +241,7 @@ async function updateService() {
     }
     
     try {
-        const response = await fetch(`http://localhost:8080/api/servicios/modificar/${currentEditingPostId}`, {
+        const response = await fetch(`/api/servicios/modificar/${currentEditingPostId}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
@@ -258,7 +258,7 @@ async function toggleVisibility(cardKey) {
     const nuevoOculto = !srv.hidden;
     
     try {
-        const response = await fetch(`http://localhost:8080/api/servicios/${srv.id}/visibilidad`, {
+        const response = await fetch(`/api/servicios/${srv.id}/visibilidad`, {
             method: 'PATCH', 
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ oculto: nuevoOculto })
@@ -328,7 +328,7 @@ async function submitRealizada(event) {
     formData.append('foto', photoInput.files[0]); 
 
     try {
-        const response = await fetch(`http://localhost:8080/api/servicios/completar/${currentEditingPostId}`, {
+        const response = await fetch(`/api/servicios/completar/${currentEditingPostId}`, {
             method: 'POST',
             body: formData 
         });
