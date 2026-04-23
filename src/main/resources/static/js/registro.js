@@ -55,7 +55,7 @@ async function validarCampoEnTiempoReal(inputElement, tipo, valor) {
     const errorTag = document.getElementById(`error-${tipo}`);
     
     try {
-        const response = await fetch(`http://localhost:8080/api/usuarios/check-${tipo}?${tipo}=${valor}`);
+        const response = await fetch(`/api/usuarios/check-${tipo}?${tipo}=${valor}`);
         
         // ⚡ PROTECCIÓN: Ignoramos errores 404 o 500 del servidor para que no actúen como "True"
         if (!response.ok) {
@@ -176,7 +176,7 @@ async function procesarRegistro(event) {
     }
 
     try {
-        const response = await fetch('http://localhost:8080/api/usuarios/enviar-codigo-registro', {
+        const response = await fetch('/api/usuarios/enviar-codigo-registro', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ correo: pendingRegData.correo })
@@ -236,7 +236,7 @@ async function confirmarCodigoRegistro() {
     }
 
     try {
-        const response = await fetch('http://localhost:8080/api/usuarios/registro-web-verificado', {
+        const response = await fetch('/api/usuarios/registro-web-verificado', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
