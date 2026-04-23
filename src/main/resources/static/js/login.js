@@ -21,7 +21,7 @@ async function procesarLogin(event) {
     btnSubmit.innerHTML = `<span class="material-icons-round animate-spin text-lg mr-2">autorenew</span> Iniciando...`;
 
     try {
-        const response = await fetch('http://localhost:8080/api/usuarios/login', {
+        const response = await fetch('/api/usuarios/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ usuario: usuario, password: password })
@@ -114,7 +114,7 @@ async function enviarCodigoRecup() {
     btn.innerHTML = `<span class="material-icons-round animate-spin text-lg mr-2">autorenew</span> Buscando...`;
 
     try {
-        const response = await fetch('http://localhost:8080/api/usuarios/recuperar/iniciar', {
+        const response = await fetch('/api/usuarios/recuperar/iniciar', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ cedula: cedula }) 
@@ -293,7 +293,7 @@ async function finalizarRecuperacion() {
     btn.innerHTML = `<span class="material-icons-round animate-spin text-lg mr-2">autorenew</span> Guardando...`;
 
     try {
-        const response = await fetch('http://localhost:8080/api/usuarios/recuperar/finalizar', {
+        const response = await fetch('/api/usuarios/recuperar/finalizar', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
