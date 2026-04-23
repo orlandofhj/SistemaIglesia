@@ -13,10 +13,10 @@ window.addEventListener('DOMContentLoaded', () => {
 async function cargarDatosBackend() {
     try {
         const [resMin, resUsu, resEv, resSrv] = await Promise.all([
-            fetch('http://localhost:8080/api/reportes/ministerios'),
-            fetch('http://localhost:8080/api/reportes/usuarios'),
-            fetch('http://localhost:8080/api/reportes/eventos'),
-            fetch('http://localhost:8080/api/reportes/servicios')
+            fetch('/api/reportes/ministerios'),
+            fetch('/api/reportes/usuarios'),
+            fetch('/api/reportes/eventos'),
+            fetch('/api/reportes/servicios')
         ]);
 
         if (resMin.ok) {
