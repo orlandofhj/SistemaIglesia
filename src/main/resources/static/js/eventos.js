@@ -17,7 +17,7 @@ function formatDateToES(isoDate) {
 
 async function fetchEventos() {
     try {
-        const response = await fetch('http://localhost:8080/api/eventos/todos');
+        const response = await fetch('/api/eventos/todos');
         if (response.ok) {
             const data = await response.json();
             eventsData = {};
@@ -46,7 +46,7 @@ async function fetchEventos() {
 
 async function fetchStaffGlobal() {
     try {
-        const response = await fetch('http://localhost:8080/api/usuarios/todos');
+        const response = await fetch('/api/usuarios/todos');
         if (response.ok) staffDB = await response.json();
     } catch (error) { console.error("Error staff:", error); }
 }
@@ -129,7 +129,7 @@ async function openEditModal(cardKey) {
     document.getElementById('new-event-guest').value = ev.guest || '';
 
     try {
-        const response = await fetch(`http://localhost:8080/api/eventos/${ev.id}/cedulas`);
+        const response = await fetch(`/api/eventos/${ev.id}/cedulas`);
         if (response.ok) {
             const cedulas = await response.json();
             function fillStaff(role, cedula) {
@@ -214,7 +214,7 @@ async function saveEvent() {
     }
 
     try {
-        const response = await fetch('http://localhost:8080/api/eventos/crear', {
+        const response = await fetch('/api/eventos/crear', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
@@ -248,7 +248,7 @@ async function updateEvent() {
     }
     
     try {
-        const response = await fetch(`http://localhost:8080/api/eventos/modificar/${currentEditingPostId}`, {
+        const response = await fetch(`/api/eventos/modificar/${currentEditingPostId}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
@@ -264,7 +264,7 @@ async function toggleVisibility(cardKey) {
     if (!ev) return;
     const nuevoOculto = !ev.hidden;
     try {
-        const response = await fetch(`http://localhost:8080/api/eventos/${ev.id}/visibilidad`, {
+        const response = await fetch(`/api/eventos/${ev.id}/visibilidad`, {
             method: 'PATCH', 
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ oculto: nuevoOculto })
@@ -339,7 +339,7 @@ async function submitRealizada(event) {
     formData.append('foto', photoInput.files[0]); 
 
     try {
-        const response = await fetch(`http://localhost:8080/api/eventos/completar/${currentEditingPostId}`, {
+        const response = await fetch(`/api/eventos/completar/${currentEditingPostId}`, {
             method: 'POST',
             body: formData 
         });
@@ -393,7 +393,7 @@ function renderAllEvents() {
         }
 
         let imageHTML = ev.image 
-            ? `<img src="http://localhost:8080${encodeURI(ev.image)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Evento">`
+            ? `<img src="${encodeURI(ev.image)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Evento">`
             : `<span class="material-icons-round text-6xl text-slate-300 dark:text-slate-600 group-hover:scale-110 transition-transform duration-300">festival</span>`;
 
         const guestHTML = ev.guest ? `
