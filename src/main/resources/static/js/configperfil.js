@@ -11,7 +11,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('display-username').textContent = session.username;
 
     try {
-        const response = await fetch(`http://localhost:8080/api/usuarios/perfil/${session.username}`);
+        const response = await fetch(`/api/usuarios/perfil/${session.username}`);
         if (response.ok) {
             const data = await response.json();
             document.getElementById('display-email').textContent = data.correo;
@@ -74,7 +74,7 @@ async function uploadAvatar(event) {
     formData.append('username', session.username);
 
     try {
-        const response = await fetch('http://localhost:8080/api/usuarios/upload-avatar', {
+        const response = await fetch('/api/usuarios/upload-avatar', {
             method: 'POST',
             body: formData 
         });
@@ -155,7 +155,7 @@ async function saveUsername() {
     }
 
     try {
-        const response = await fetch('http://localhost:8080/api/usuarios/actualizar-datos', {
+        const response = await fetch('/api/usuarios/actualizar-datos', {
             method: 'PUT', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ oldUsername: session.username, newUsername: val1 })
         });
@@ -198,7 +198,7 @@ async function saveEmail() {
     }
     
     try {
-        const response = await fetch('http://localhost:8080/api/usuarios/enviar-codigo-actualizacion', {
+        const response = await fetch('/api/usuarios/enviar-codigo-actualizacion', {
             method: 'POST', 
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username: session.username, correoNuevo: val1 })
@@ -276,7 +276,7 @@ async function confirmarCodigoCorreo() {
     }
 
     try {
-        const response = await fetch('http://localhost:8080/api/usuarios/actualizar-correo-verificado', {
+        const response = await fetch('/api/usuarios/actualizar-correo-verificado', {
             method: 'PUT', 
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
@@ -340,7 +340,7 @@ async function savePassword() {
     }
 
     try {
-        const response = await fetch('http://localhost:8080/api/usuarios/actualizar-password', {
+        const response = await fetch('/api/usuarios/actualizar-password', {
             method: 'PUT', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username: session.username, newPassword: val1 })
         });
