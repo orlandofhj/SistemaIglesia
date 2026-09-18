@@ -1,0 +1,84 @@
+/* ==========================================================================
+   ESTILOS GLOBALES - IGLESIA DE LA CALLE
+   ========================================================================== */
+
+body { 
+    font-family: 'Inter', sans-serif; 
+    -webkit-tap-highlight-color: transparent; 
+    min-height: max(884px, 100dvh);
+}
+
+/* Sombras estilo iOS para las tarjetas */
+.ios-shadow { 
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); 
+}
+
+/* Configuración de los íconos de Google */
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400;
+    transition: all 0.2s ease;
+}
+
+/* Animación suave para los menús desplegables */
+.submenu-transition {
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+}
+
+@media (min-width: 1024px) {
+    .desktop-sidebar-fixed {
+        transform: translateX(0) !important;
+    }
+}
+
+/* Ocultar barra de desplazamiento estándar pero permitir scroll */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Animación del botón flotante (FAB) */
+.fab-button {
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.fab-button:active {
+    transform: scale(0.90);
+}
+
+/* Diseño personalizado para la barra de scroll de los modales */
+.modal-scroll::-webkit-scrollbar {
+    width: 6px;
+}
+.modal-scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+.modal-scroll::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 20px;
+}
+.dark .modal-scroll::-webkit-scrollbar-thumb {
+    background-color: #475569;
+}
+
+/* Animación para filas dinámicas de estudiantes */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in {
+    animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* Para capitalizar la primera letra en inputs */
+.first-letter-capitalize::first-letter {
+    text-transform: uppercase;
+}
+
+/* Quitar flechas a inputs numéricos (usado en Teología) */
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+    -webkit-appearance: none; 
+    margin: 0; 
+}
