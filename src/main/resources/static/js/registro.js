@@ -9,12 +9,42 @@ window.addEventListener('DOMContentLoaded', () => {
 
     if(inputCedula && inputCorreo && inputUsuario) {
         // Validar contra la BD al salir del campo (perder el foco)
-        inputCedula.addEventListener('blur', () => validarCampoEnTiempoReal(inputCedula, 'cedula', inputCedula.value));
+        inputCedula.addEventListener('blur', () => {
+            const valor = inputCedula.value;
+            if (valor.length >= 7 && valor.length <= 8) {
+                validarCampoEnTiempoReal(inputCedula, 'cedula', valor);
+            }
+        });
+        
         inputCorreo.addEventListener('blur', () => validarCampoEnTiempoReal(inputCorreo, 'correo', inputCorreo.value));
         inputUsuario.addEventListener('blur', () => validarCampoEnTiempoReal(inputUsuario, 'usuario', inputUsuario.value));
 
-        // ⚡ NUEVO: Limpiar el error visual inmediatamente al teclear/borrar ⚡
-        inputCedula.addEventListener('input', () => limpiarErrorVisual(inputCedula, 'cedula'));
+        // ⚡ NUEVO: Validación estricta en tiempo real para la Cédula ⚡
+        inputCedula.addEventListener('input', (e) => {
+            // 1. Evitar que escriban letras (solo números) y limitar a 8 dígitos máximo
+            let valor = e.target.value.replace(/\D/g, ''); 
+            if (valor.length > 8) {
+                valor = valor.substring(0, 8);
+            }
+            e.target.value = valor;
+
+            // 2. Comprobar si cumple con el mínimo de 7 dígitos
+            const hint = document.getElementById('hint-cedula');
+            const errorTag = document.getElementById('error-cedula');
+
+            if (valor.length > 0 && valor.length < 7) {
+                inputCedula.classList.add('ring-2', 'ring-red-500', 'border-red-500');
+                if (hint) hint.classList.add('hidden');
+                errorTag.innerText = "La cédula debe tener un mínimo de 7 dígitos.";
+                errorTag.classList.remove('hidden');
+                cedulaOk = false;
+                actualizarBotonSubmit();
+            } else {
+                limpiarErrorVisual(inputCedula, 'cedula');
+            }
+        });
+
+        // Limpiar el error visual inmediatamente al teclear/borrar en los demás campos
         inputCorreo.addEventListener('input', () => limpiarErrorVisual(inputCorreo, 'correo'));
         inputUsuario.addEventListener('input', () => limpiarErrorVisual(inputUsuario, 'usuario'));
     }
