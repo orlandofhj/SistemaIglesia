@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html class="light" lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Iniciar Sesión</title>
+    
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+    
+    <link rel="stylesheet" th:href="@{/css/global.css}" />
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 transition-colors duration-200 min-h-screen flex items-center justify-center p-4 relative">
+    
+    <button class="absolute top-6 right-6 p-3 bg-white dark:bg-slate-800 rounded-full ios-shadow text-slate-600 dark:text-slate-300 hover:text-primary transition-colors border border-slate-100 dark:border-slate-700" onclick="toggleDarkMode()">
+        <span class="material-icons-round dark:hidden">dark_mode</span>
+        <span class="material-icons-round hidden dark:block text-yellow-500">light_mode</span>
+    </button>
+
+    <div class="w-full max-w-md bg-white dark:bg-slate-800 rounded-3xl p-8 sm:p-10 ios-shadow border border-slate-100 dark:border-slate-700">
+        <div class="text-center mb-8">
+            <div class="mx-auto w-28 h-28 mb-4 bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100 dark:border-slate-700 flex items-center justify-center p-2">
+                <img th:src="@{'/images/LogoIglesiaDeLaCalle.jpeg'}" alt="Logo Iglesia" class="w-full h-full object-contain" />
+            </div>
+            <h2 class="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Bienvenido</h2>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-2">Ingresa tus credenciales para acceder al sistema.</p>
+        </div>
+
+        <form class="space-y-6" onsubmit="procesarLogin(event)">
+            <div>
+                <label class="block text-sm font-medium text-slate-900 dark:text-slate-200 mb-2" for="username">Usuario</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <span class="material-icons-round text-slate-400 text-lg">person</span>
+                    </div>
+                    <input class="block w-full pl-10 pr-3 py-2.5 rounded-xl border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white shadow-sm focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm transition-colors" id="username" type="text" placeholder="Tu usuario" required/>
+                </div>
+            </div>
+
+            <div>
+                <div class="flex items-center justify-between mb-2">
+                    <label class="block text-sm font-medium text-slate-900 dark:text-slate-200" for="password">Contraseña</label>
+                    <a href="#" onclick="abrirModalRecuperar()" class="text-xs font-semibold text-primary hover:text-primary/80 transition-colors">¿Olvidaste tu usuario/clave?</a>
+                </div>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <span class="material-icons-round text-slate-400 text-lg">lock</span>
+                    </div>
+                    <input class="block w-full pl-10 pr-10 py-2.5 rounded-xl border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white shadow-sm focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm transition-colors" id="password" type="password" placeholder="••••••••" required/>
+                    <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors" onclick="togglePassword()">
+                        <span class="material-icons-round text-xl" id="eye-icon">visibility</span>
+                    </button>
+                </div>
+            </div>
+
+            <button class="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-bold text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors mt-2" type="submit">
+                Iniciar Sesión
+            </button>
+        </form>
+
+        <div class="mt-8 pt-6 border-t border-slate-100 dark:border-slate-700 text-center">
+            <p class="text-sm text-slate-600 dark:text-slate-400">
+                ¿No tienes una cuenta? 
+                <a href="/registro" class="font-bold text-primary hover:underline">Crear perfil</a>
+            </p>
+        </div>
+    </div>
+
+    <div class="fixed inset-0 z-[80] hidden" id="modal-login-error">
+        <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onclick="closeErrorModal()"></div>
+        <div class="fixed inset-0 z-10 overflow-y-auto">
+            <div class="flex min-h-full items-center justify-center p-4 text-center">
+                <div class="relative transform overflow-hidden rounded-2xl bg-white dark:bg-slate-800 text-left shadow-2xl transition-all w-full max-w-sm border border-slate-100 dark:border-slate-700">
+                    <div class="p-6 text-center">
+                        <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/30 mb-5">
+                            <span class="material-icons-round text-3xl text-red-600 dark:text-red-400">error_outline</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">Error de Acceso</h3>
+                        <p class="text-sm text-slate-500 dark:text-slate-400" id="login-error-message">Mensaje de error aquí.</p>
+                    </div>
+                    <div class="px-6 py-4 bg-slate-50 dark:bg-slate-700/50 flex justify-center border-t border-slate-100 dark:border-slate-700">
+                        <button class="w-full px-4 py-2.5 bg-red-600 text-white font-bold rounded-xl shadow-lg shadow-red-600/20 hover:bg-red-700 transition-colors" onclick="closeErrorModal()">Intentar de nuevo</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed inset-0 z-[100] hidden" id="modal-recup-tipo">
+        <div class="fixed inset-0 bg-black/60 backdrop-blur-sm" onclick="cerrarRecuperacion()"></div>
+        <div class="fixed inset-0 z-10 flex items-center justify-center p-4">
+            <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 w-full max-w-sm shadow-2xl border border-slate-100 dark:border-slate-700">
+                <h3 class="text-xl font-bold mb-4 text-center">¿Qué deseas recuperar?</h3>
+                <div class="space-y-3 mb-6">
+                    <label class="flex items-center p-3 border border-slate-200 dark:border-slate-600 rounded-xl cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
+                        <input type="radio" name="tipo_recup" value="usuario" class="w-4 h-4 text-primary bg-slate-100 border-slate-300 focus:ring-primary">
+                        <span class="ml-3 font-medium text-slate-700 dark:text-slate-300">Mi Nombre de Usuario</span>
+                    </label>
+                    <label class="flex items-center p-3 border border-slate-200 dark:border-slate-600 rounded-xl cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
+                        <input type="radio" name="tipo_recup" value="password" class="w-4 h-4 text-primary bg-slate-100 border-slate-300 focus:ring-primary">
+                        <span class="ml-3 font-medium text-slate-700 dark:text-slate-300">Mi Contraseña</span>
+                    </label>
+                </div>
+                <div class="flex gap-2">
+                    <button class="w-full py-2 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl font-bold" onclick="cerrarRecuperacion()">Cancelar</button>
+                    <button class="w-full py-2 bg-primary text-white rounded-xl font-bold shadow-lg" onclick="irARecupCedula()">Siguiente</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed inset-0 z-[100] hidden" id="modal-recup-cedula">
+        <div class="fixed inset-0 bg-black/60 backdrop-blur-sm" onclick="cerrarRecuperacion()"></div>
+        <div class="fixed inset-0 z-10 flex items-center justify-center p-4">
+            <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 w-full max-w-sm shadow-2xl border border-slate-100 dark:border-slate-700 text-center">
+                <span class="material-icons-round text-4xl text-primary mb-2">badge</span>
+                <h3 class="text-xl font-bold mb-2">Verifica tu Identidad</h3>
+                <p class="text-sm text-slate-500 mb-4">Ingresa tu número de cédula para buscar tu cuenta en el sistema.</p>
+                
+                <p class="text-sm text-red-500 font-bold mb-3 hidden" id="recup-cedula-error"></p>
+                
+                <input type="text" id="recup-cedula" class="w-full text-center text-xl font-bold rounded-xl border-slate-300 dark:border-slate-600 dark:bg-slate-700 py-3 mb-4 focus:ring-primary focus:border-primary" placeholder="Ej. 12345678" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 8); document.getElementById('recup-cedula-error').classList.add('hidden');">
+                
+                <div class="flex gap-2">
+                    <button class="w-full py-2 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl font-bold" onclick="cerrarRecuperacion()">Cancelar</button>
+                    <button id="btn-recup-enviar" class="w-full flex justify-center items-center py-2 bg-primary text-white rounded-xl font-bold shadow-lg" onclick="enviarCodigoRecup()">Buscar y Enviar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed inset-0 z-[100] hidden" id="modal-recup-codigo">
+        <div class="fixed inset-0 bg-black/60 backdrop-blur-sm" onclick="cerrarRecuperacion()"></div>
+        <div class="fixed inset-0 z-10 flex items-center justify-center p-4">
+            <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 w-full max-w-sm shadow-2xl border border-slate-100 dark:border-slate-700 text-center">
+                <span class="material-icons-round text-4xl text-primary mb-2">mark_email_read</span>
+                <h3 class="text-xl font-bold mb-1">Ingresa el Código</h3>
+                <p class="text-sm text-slate-500 mb-4">El código de recuperación se envió al correo:<br><strong class="text-slate-700 dark:text-slate-300" id="recup-correo-display"></strong></p>
+                <input type="text" id="recup-codigo" maxlength="6" class="w-full text-center text-3xl tracking-[0.5em] font-bold rounded-xl border-slate-300 dark:border-slate-600 dark:bg-slate-700 py-4 mb-2 focus:ring-primary" placeholder="------" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                <p class="text-sm font-medium mb-4 text-primary" id="recup-timer"></p>
+                <div class="flex gap-2">
+                    <button class="w-full py-2 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl font-bold" onclick="cerrarRecuperacion()">Cancelar</button>
+                    <button class="w-full py-2 bg-primary text-white rounded-xl font-bold shadow-lg" onclick="irARecupNuevo()">Verificar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed inset-0 z-[100] hidden" id="modal-recup-nuevo">
+        <div class="fixed inset-0 bg-black/60 backdrop-blur-sm" onclick="cerrarRecuperacion()"></div>
+        <div class="fixed inset-0 z-10 flex items-center justify-center p-4">
+            <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 w-full max-w-sm shadow-2xl border border-slate-100 dark:border-slate-700">
+                <h3 class="text-xl font-bold mb-3 text-center" id="recup-nuevo-titulo">Nueva Credencial</h3>
+                
+                <p class="text-sm text-red-500 font-bold mb-3 hidden text-center" id="recup-nuevo-error"></p>
+
+                <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2" id="recup-nuevo-label">Dato</label>
+                
+                <div class="relative">
+                    <input type="text" id="recup-nuevo-input" class="w-full rounded-xl border-slate-300 dark:border-slate-600 dark:bg-slate-700 py-3 mb-2 focus:ring-primary focus:border-primary pr-10" oninput="validarPasswordRecup(); document.getElementById('recup-nuevo-error').classList.add('hidden');">
+                    <button type="button" id="btn-eye-recup" class="absolute right-3 top-3 text-slate-400 hover:text-primary hidden transition-colors" onclick="togglePasswordRecup()">
+                        <span class="material-icons-round" id="eye-icon-recup">visibility</span>
+                    </button>
+                </div>
+
+                <div id="recup-password-reqs" class="hidden mb-6 bg-slate-50 dark:bg-slate-700/50 rounded-xl p-4 border border-slate-100 dark:border-slate-600">
+                    <p class="text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">La contraseña debe tener:</p>
+                    <ul class="space-y-1.5 text-xs">
+                        <li id="req-length-recup" class="flex items-center gap-2 text-slate-500 dark:text-slate-400 transition-colors"><span class="material-icons-round text-[16px]">radio_button_unchecked</span> Mínimo 8 caracteres</li>
+                        <li id="req-upper-recup" class="flex items-center gap-2 text-slate-500 dark:text-slate-400 transition-colors"><span class="material-icons-round text-[16px]">radio_button_unchecked</span> Una letra mayúscula</li>
+                        <li id="req-number-recup" class="flex items-center gap-2 text-slate-500 dark:text-slate-400 transition-colors"><span class="material-icons-round text-[16px]">radio_button_unchecked</span> Un número</li>
+                        <li id="req-symbol-recup" class="flex items-center gap-2 text-slate-500 dark:text-slate-400 transition-colors"><span class="material-icons-round text-[16px]">radio_button_unchecked</span> Un símbolo especial</li>
+                    </ul>
+                </div>
+                
+                <div id="recup-spacer" class="h-4"></div>
+
+                <div class="flex gap-2">
+                    <button class="w-full py-2 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl font-bold" onclick="cerrarRecuperacion()">Cancelar</button>
+                    <button id="btn-recup-finalizar" class="w-full flex justify-center items-center py-2 bg-primary text-white rounded-xl font-bold shadow-lg" onclick="finalizarRecuperacion()">Guardar Cambios</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed inset-0 z-[100] hidden" id="modal-recup-exito">
+        <div class="fixed inset-0 bg-black/60 backdrop-blur-sm"></div>
+        <div class="fixed inset-0 z-10 flex items-center justify-center p-4">
+            <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 w-full max-w-sm shadow-2xl border border-slate-100 dark:border-slate-700 text-center">
+                <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30 mb-4">
+                    <span class="material-icons-round text-4xl text-green-600 dark:text-green-400">check_circle</span>
+                </div>
+                <h3 class="text-xl font-bold mb-2">¡Recuperación Exitosa!</h3>
+                <p class="text-sm text-slate-500 mb-6" id="recup-exito-msj"></p>
+                <button id="btn-exito-recup" class="w-full py-2 bg-primary text-white rounded-xl font-bold shadow-lg" onclick="cerrarRecuperacionExito()">Entrar al Sistema</button>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/js/main.js}"></script>
+    <script th:src="@{/js/login.js?v=3}"></script>
+</body>
+</html>
