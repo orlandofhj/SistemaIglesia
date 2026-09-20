@@ -68,6 +68,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
+		<!-- API de Resend para correos -->
+<dependency>
+    <groupId>com.resend</groupId>
+    <artifactId>resend-java</artifactId>
+    <version>3.1.0</version>
+</dependency>
 
 	</dependencies>
 
