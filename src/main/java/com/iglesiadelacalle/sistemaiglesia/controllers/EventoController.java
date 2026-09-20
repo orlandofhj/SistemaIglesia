@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.iglesiadelacalle.sistemaiglesia.models.*;
 import com.iglesiadelacalle.sistemaiglesia.repository.*;
+import com.iglesiadelacalle.sistemaiglesia.services.SupabaseStorageService;
 
 @RestController
 @RequestMapping("/api/eventos")
@@ -22,6 +23,9 @@ public class EventoController {
     @Autowired private PersonaRepository personaRepo;
     @Autowired private PromocionRepository promocionRepo;
     @Autowired private HistorialEventoRepository historialRepo;
+    
+    // ⚡ INYECTAMOS EL SERVICIO DE LA NUBE ⚡
+    @Autowired private SupabaseStorageService supabaseService;
 
     private void registrarHistorial(String accion, String solicitanteUsername, Evento ev, Post postContext) {
         String solNombre = "Sistema";
@@ -73,7 +77,6 @@ public class EventoController {
                 map.put("director", ev.getPost().getDirector() != null ? ev.getPost().getDirector().getNombre() + " " + ev.getPost().getDirector().getApellido() : "N/A");
                 map.put("predicador", ev.getPost().getPredicador() != null ? ev.getPost().getPredicador().getNombre() + " " + ev.getPost().getPredicador().getApellido() : "N/A");
                 
-                // ⚡ PROCESAMIENTO DE MÚLTIPLES INVITADOS ⚡
                 List<Map<String, Object>> invitadosList = new ArrayList<>();
                 if (ev.getPost().getInvitados() != null) {
                     for(Persona inv : ev.getPost().getInvitados()) {
@@ -126,7 +129,6 @@ public class EventoController {
             post.setDirector(obtenerOCrearPersonaSilenciosa(dirData));
             post.setPredicador(obtenerOCrearPersonaSilenciosa(predData));
             
-            // ⚡ GUARDADO DE MÚLTIPLES INVITADOS ⚡
             List<Map<String, String>> invDataList = (List<Map<String, String>>) payload.get("invitados");
             List<Persona> listInvitados = new ArrayList<>();
             if (invDataList != null) {
@@ -144,13 +146,10 @@ public class EventoController {
             ev.setEstado("Pendiente");
             ev.setOculto(false);
 
+            // ⚡ SUBIDA DEL FLYER A SUPABASE ⚡
             if (flyer != null && !flyer.isEmpty()) {
-                String uploadDir = "uploads/flyers/";
-                java.nio.file.Path uploadPath = java.nio.file.Paths.get(uploadDir);
-                if (!java.nio.file.Files.exists(uploadPath)) java.nio.file.Files.createDirectories(uploadPath);
-                String fileName = post.getIdPost() + "_evento_flyer_" + java.util.UUID.randomUUID().toString() + "_" + flyer.getOriginalFilename().replaceAll(" ", "_");
-                java.nio.file.Files.copy(flyer.getInputStream(), uploadPath.resolve(fileName));
-                ev.setFlyerUrl("/" + uploadDir + fileName);
+                String urlFoto = supabaseService.subirArchivo(flyer);
+                ev.setFlyerUrl(urlFoto);
             }
 
             eventoRepo.save(ev);
@@ -191,7 +190,6 @@ public class EventoController {
             post.setDirector(obtenerOCrearPersonaSilenciosa(dirData));
             post.setPredicador(obtenerOCrearPersonaSilenciosa(predData));
             
-            // ⚡ GUARDADO DE MÚLTIPLES INVITADOS ⚡
             List<Map<String, String>> invDataList = (List<Map<String, String>>) payload.get("invitados");
             List<Persona> listInvitados = new ArrayList<>();
             if (invDataList != null) {
@@ -206,13 +204,10 @@ public class EventoController {
 
             ev.setLugar((String) payload.get("lugar"));
 
+            // ⚡ SUBIDA DEL FLYER A SUPABASE ⚡
             if (flyer != null && !flyer.isEmpty()) {
-                String uploadDir = "uploads/flyers/";
-                java.nio.file.Path uploadPath = java.nio.file.Paths.get(uploadDir);
-                if (!java.nio.file.Files.exists(uploadPath)) java.nio.file.Files.createDirectories(uploadPath);
-                String fileName = post.getIdPost() + "_evento_flyer_" + java.util.UUID.randomUUID().toString() + "_" + flyer.getOriginalFilename().replaceAll(" ", "_");
-                java.nio.file.Files.copy(flyer.getInputStream(), uploadPath.resolve(fileName));
-                ev.setFlyerUrl("/" + uploadDir + fileName);
+                String urlFoto = supabaseService.subirArchivo(flyer);
+                ev.setFlyerUrl(urlFoto);
             }
 
             eventoRepo.save(ev);
@@ -269,15 +264,10 @@ public class EventoController {
             ev.setObservaciones(observaciones);
             ev.setNovedades(novedades);
             
+            // ⚡ SUBIDA DE LA FOTO DEL EVENTO A SUPABASE ⚡
             if (foto != null && !foto.isEmpty()) {
-                String uploadDir = "uploads/eventos/";
-                java.nio.file.Path uploadPath = java.nio.file.Paths.get(uploadDir);
-                if (!java.nio.file.Files.exists(uploadPath)) java.nio.file.Files.createDirectories(uploadPath);
-                
-                String fileName = id + "_" + java.util.UUID.randomUUID().toString() + "_" + foto.getOriginalFilename().replaceAll(" ", "_");
-                java.nio.file.Files.copy(foto.getInputStream(), uploadPath.resolve(fileName));
-                
-                ev.setFotoUrl("/" + uploadDir + fileName);
+                String urlFoto = supabaseService.subirArchivo(foto);
+                ev.setFotoUrl(urlFoto);
             }
             
             eventoRepo.save(ev);
@@ -291,7 +281,6 @@ public class EventoController {
     public ResponseEntity<?> obtenerHistorial() {
         try {
             List<HistorialEvento> historial = historialRepo.findAll();
-            // Ordenamos del más reciente al más antiguo
             historial.sort((a, b) -> b.getFechaHora().compareTo(a.getFechaHora()));
             return ResponseEntity.ok(historial);
         } catch (Exception e) {
