@@ -15,17 +15,12 @@ import java.util.List;
 @Service
 public class MultimediaCleanupService {
 
-    @Autowired
-    private SerDominicalRepository serDominicalRepo;
+    @Autowired private SerDominicalRepository serDominicalRepo;
+    @Autowired private EventoRepository eventoRepo;
+    @Autowired private SupabaseStorageService supabaseService;
 
-    @Autowired
-    private EventoRepository eventoRepo;
-
-    // ⚡ Inyectamos tu nuevo servicio de Supabase
-    @Autowired
-    private SupabaseStorageService supabaseService;
-
-    @Scheduled(cron = "0 0 3 * * ?")
+    // Se ejecuta a las 3:00 AM hora de Caracas
+    @Scheduled(cron = "0 0 3 * * ?", zone = "America/Caracas")
     public void limpiarArchivosViejos() {
         LocalDate fechaLimite = LocalDate.now(ZoneId.of("America/Caracas")).minusMonths(3);
         System.out.println("⏳ Iniciando limpieza en Supabase de archivos anteriores al: " + fechaLimite);
@@ -37,53 +32,51 @@ public class MultimediaCleanupService {
     }
 
     private void limpiarServicios(LocalDate fechaLimite) {
-        List<SerDominical> servicios = serDominicalRepo.findAll();
+        // ⚡ Solo traemos los que realmente necesitan limpieza
+        List<SerDominical> servicios = serDominicalRepo.buscarServiciosAntiguosConMultimedia(fechaLimite);
         
         for (SerDominical sd : servicios) {
-            if (sd.getPost() != null && sd.getPost().getFecha() != null) {
-                if (sd.getPost().getFecha().isBefore(fechaLimite)) {
-                    boolean modificado = false;
+            boolean modificado = false;
 
-                    if (sd.getFlyerUrl() != null && !sd.getFlyerUrl().isEmpty()) {
-                        supabaseService.borrarArchivo(sd.getFlyerUrl());
-                        sd.setFlyerUrl(null);
-                        modificado = true;
-                    }
-                    
-                    if (sd.getFotoUrl() != null && !sd.getFotoUrl().isEmpty()) {
-                        supabaseService.borrarArchivo(sd.getFotoUrl());
-                        sd.setFotoUrl(null);
-                        modificado = true;
-                    }
+            if (sd.getFlyerUrl() != null && !sd.getFlyerUrl().isEmpty()) {
+                supabaseService.borrarArchivo(sd.getFlyerUrl());
+                sd.setFlyerUrl(null);
+                modificado = true;
+            }
+            
+            if (sd.getFotoUrl() != null && !sd.getFotoUrl().isEmpty()) {
+                supabaseService.borrarArchivo(sd.getFotoUrl());
+                sd.setFotoUrl(null);
+                modificado = true;
+            }
 
-                    if (modificado) serDominicalRepo.save(sd);
-                }
+            if (modificado) {
+                serDominicalRepo.save(sd);
             }
         }
     }
 
     private void limpiarEventos(LocalDate fechaLimite) {
-        List<Evento> eventos = eventoRepo.findAll();
+        // ⚡ Solo traemos los que realmente necesitan limpieza
+        List<Evento> eventos = eventoRepo.buscarEventosAntiguosConMultimedia(fechaLimite);
         
         for (Evento ev : eventos) {
-            if (ev.getPost() != null && ev.getPost().getFecha() != null) {
-                if (ev.getPost().getFecha().isBefore(fechaLimite)) {
-                    boolean modificado = false;
+            boolean modificado = false;
 
-                    if (ev.getFlyerUrl() != null && !ev.getFlyerUrl().isEmpty()) {
-                        supabaseService.borrarArchivo(ev.getFlyerUrl());
-                        ev.setFlyerUrl(null);
-                        modificado = true;
-                    }
-                    
-                    if (ev.getFotoUrl() != null && !ev.getFotoUrl().isEmpty()) {
-                        supabaseService.borrarArchivo(ev.getFotoUrl());
-                        ev.setFotoUrl(null);
-                        modificado = true;
-                    }
+            if (ev.getFlyerUrl() != null && !ev.getFlyerUrl().isEmpty()) {
+                supabaseService.borrarArchivo(ev.getFlyerUrl());
+                ev.setFlyerUrl(null);
+                modificado = true;
+            }
+            
+            if (ev.getFotoUrl() != null && !ev.getFotoUrl().isEmpty()) {
+                supabaseService.borrarArchivo(ev.getFotoUrl());
+                ev.setFotoUrl(null);
+                modificado = true;
+            }
 
-                    if (modificado) eventoRepo.save(ev);
-                }
+            if (modificado) {
+                eventoRepo.save(ev);
             }
         }
     }
