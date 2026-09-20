@@ -4,7 +4,7 @@ let eventsData = {};
 let staffDB = []; 
 let currentEditingPostId = null; 
 let eventToRevertId = null; 
-let currentGuests = []; // ⚡ NUEVO: Arreglo de invitados
+let currentGuests = [];
 
 let currentPageGrid = 1;
 const itemsPerPageGrid = 6;
@@ -40,7 +40,7 @@ async function fetchEventos() {
                     time: ev.hora,  
                     directorName: ev.director,
                     preacherName: ev.predicador,
-                    guests: ev.invitados || [], // ⚡ AHORA ES UN ARREGLO
+                    guests: ev.invitados || [],
                     attendees: ev.asistentes || 0,
                     observations: ev.observaciones || '',
                     news: ev.novedades || '',
@@ -107,7 +107,6 @@ function resetStaffInputs() {
 
 function desbloquearStaff(role) {
     const clasesBloqueo = ['bg-slate-100', 'dark:bg-slate-700/50', 'text-slate-500', 'cursor-not-allowed'];
-    
     const elNombre = document.getElementById(`new-event-${role}-nombre`);
     const elNac = document.getElementById(`new-event-${role}-nac`);
     const elGenero = document.getElementById(`new-event-${role}-genero`);
@@ -121,7 +120,6 @@ function openCreateModal() {
     currentEditingPostId = null;
     document.getElementById('form-nuevo-evento').reset();
     document.getElementById('modal-title-new').innerText = "Agregar Nuevo Evento";
-    
     document.getElementById('btn-save-event').classList.remove('hidden');
     document.getElementById('btn-edit-event').classList.add('hidden');
     
@@ -139,10 +137,8 @@ async function openEditModal(cardKey) {
     resetStaffInputs();
     
     document.getElementById('modal-title-new').innerText = `Editar Evento: ${ev.title}`;
-    
     document.getElementById('btn-save-event').classList.add('hidden');
     document.getElementById('btn-edit-event').classList.remove('hidden');
-
     document.getElementById('new-event-title').value = ev.title;
     document.getElementById('new-event-location').value = ev.location;
     document.getElementById('new-event-date').value = ev.date; 
@@ -152,7 +148,6 @@ async function openEditModal(cardKey) {
     document.getElementById('new-event-minute').value = timeObj.minute;
     document.getElementById('new-event-ampm').value = timeObj.ampm;
 
-    // ⚡ Llenar la lista dinámica de invitados
     currentGuests = [];
     if (ev.guests && ev.guests.length > 0) {
         ev.guests.forEach(g => {
@@ -172,9 +167,9 @@ async function openEditModal(cardKey) {
     if (ev.flyer) {
         previewContainer.classList.remove('hidden');
         if (ev.flyer.match(/\.(mp4|webm|ogg)$/i)) { 
-            previewContainer.innerHTML = `<video src="${ev.flyer}" class="w-full h-full object-cover bg-black" controls playsinline></video>`;
+            previewContainer.innerHTML = `<video src="${ev.flyer}" class="w-full h-full object-cover bg-black cursor-pointer" controls playsinline onclick="openMediaModal('${ev.flyer}', 'video')"></video>`;
         } else {
-            previewContainer.innerHTML = `<img src="${ev.flyer}" class="w-full h-full object-contain" alt="Flyer">`;
+            previewContainer.innerHTML = `<img src="${ev.flyer}" onerror="this.src=''; this.alt='Imagen no encontrada (404)';" class="w-full h-full object-contain cursor-pointer" alt="Flyer" onclick="openMediaModal('${ev.flyer}', 'image')">`;
         }
     }
 
@@ -200,7 +195,6 @@ async function openEditModal(cardKey) {
     toggleModal('modal-nuevo-evento');
 }
 
-// ⚡ LÓGICA DE INVITADOS DINÁMICOS ⚡
 function agregarInvitadoTabla() {
     const nac = document.getElementById('new-event-guest-nac').value;
     const cedula = document.getElementById('new-event-guest-cedula').value.trim();
@@ -299,7 +293,7 @@ function getEventPayload() {
         hora: time24h,       
         director: getPersonaData('director'),
         predicador: getPersonaData('preacher'),
-        invitados: currentGuests // ⚡ Enviamos el arreglo completo
+        invitados: currentGuests
     };
 }
 
@@ -393,7 +387,7 @@ function previewFlyer(event) {
         return;
     }
 
-    if (file.size > 31457280) { // 30MB
+    if (file.size > 31457280) { 
         showEventError("El archivo es demasiado pesado. El límite máximo es de 30MB.");
         event.target.value = ''; 
         container.classList.add('hidden');
@@ -404,9 +398,9 @@ function previewFlyer(event) {
     const url = URL.createObjectURL(file);
 
     if (file.type.startsWith('video/')) {
-        container.innerHTML = `<video src="${url}" class="w-full h-full object-cover bg-black" controls playsinline></video>`;
+        container.innerHTML = `<video src="${url}" class="w-full h-full object-cover bg-black cursor-pointer" controls playsinline onclick="openMediaModal('${url}', 'video')"></video>`;
     } else if (file.type.startsWith('image/')) {
-        container.innerHTML = `<img src="${url}" class="w-full h-full object-contain" alt="Flyer preview">`;
+        container.innerHTML = `<img src="${url}" class="w-full h-full object-contain cursor-pointer" alt="Flyer preview" onclick="openMediaModal('${url}', 'image')">`;
     } else {
         showEventError("Formato no soportado. Sube una imagen o un video.");
         event.target.value = ''; 
@@ -568,13 +562,14 @@ function renderAllEvents() {
                         </div>
                     </div>`;
             } else {
-                imageHTML = `<img src="${displayMedia}" class="w-full h-full object-cover cursor-pointer group-hover:scale-105 transition-transform duration-500" alt="Evento" onclick="openMediaModal('${displayMedia}', 'image')">`;
+                imageHTML = `
+                    <img src="${displayMedia}" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" class="w-full h-full object-cover cursor-pointer group-hover:scale-105 transition-transform duration-500" alt="Evento" onclick="openMediaModal('${displayMedia}', 'image')">
+                    <span class="hidden material-icons-round text-6xl text-slate-300 dark:text-slate-600 group-hover:scale-110 transition-transform duration-300" title="Imagen Eliminada de la Nube">broken_image</span>`;
             }
         } else {
             imageHTML = `<span class="material-icons-round text-6xl text-slate-300 dark:text-slate-600 group-hover:scale-110 transition-transform duration-300">festival</span>`;
         }
 
-        // ⚡ RENDERIZADO DE INVITADOS MÚLTIPLES ⚡
         let guestHTML = '';
         if (ev.guests && ev.guests.length > 0) {
             const names = ev.guests.map(g => {
@@ -753,7 +748,7 @@ async function openHistoryModal() {
         const response = await fetch(`/api/eventos/historial`);
         if (response.ok) {
             historyData = await response.json();
-            currentHistoryPage = 1; // Reiniciar a pag 1 al abrir
+            currentHistoryPage = 1;
             renderHistoryTable();
         } else {
             tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-red-500">Error al cargar el historial.</td></tr>`;
@@ -909,9 +904,9 @@ function openMarkRealizadaModal(cardKey) {
             placeholder.classList.add('hidden');
             const container = document.getElementById('realizada-media-container');
             if (ev.image.match(/\.(mp4|webm|ogg)$/i)) {
-                container.insertAdjacentHTML('beforeend', `<video id="photo-preview-element" src="${ev.image}" class="absolute inset-0 w-full h-full object-cover rounded-lg shadow-md mx-auto bg-black" controls playsinline></video>`);
+                container.insertAdjacentHTML('beforeend', `<video id="photo-preview-element" src="${ev.image}" class="absolute inset-0 w-full h-full object-cover rounded-lg shadow-md mx-auto bg-black cursor-pointer" controls playsinline onclick="openMediaModal('${ev.image}', 'video')"></video>`);
             } else {
-                container.insertAdjacentHTML('beforeend', `<img id="photo-preview-element" src="${ev.image}" class="absolute inset-0 w-full h-full object-cover rounded-lg shadow-md mx-auto" alt="Vista previa">`);
+                container.insertAdjacentHTML('beforeend', `<img id="photo-preview-element" src="${ev.image}" onerror="this.src=''; this.alt='Imagen no encontrada (404)';" class="absolute inset-0 w-full h-full object-cover rounded-lg shadow-md mx-auto cursor-pointer" alt="Vista previa" onclick="openMediaModal('${ev.image}', 'image')">`);
             }
         }
     } else {
@@ -933,7 +928,7 @@ function previewImage(event) {
 
     if (!file) return; 
 
-    if (file.size > 31457280) { // 30MB
+    if (file.size > 31457280) { 
         showRealizadaError("El archivo es demasiado pesado. El límite máximo es de 30MB.");
         event.target.value = ''; 
         if(previewElement) previewElement.remove();
@@ -946,9 +941,9 @@ function previewImage(event) {
     if(previewElement) previewElement.remove();
 
     if (file.type.startsWith('video/')) {
-        container.insertAdjacentHTML('beforeend', `<video id="photo-preview-element" src="${url}" class="absolute inset-0 w-full h-full object-cover rounded-lg shadow-md mx-auto bg-black" controls playsinline></video>`);
+        container.insertAdjacentHTML('beforeend', `<video id="photo-preview-element" src="${url}" class="absolute inset-0 w-full h-full object-cover rounded-lg shadow-md mx-auto bg-black cursor-pointer" controls playsinline onclick="openMediaModal('${url}', 'video')"></video>`);
     } else if (file.type.startsWith('image/')) {
-        container.insertAdjacentHTML('beforeend', `<img id="photo-preview-element" src="${url}" class="absolute inset-0 w-full h-full object-cover rounded-lg shadow-md mx-auto" alt="Vista previa">`);
+        container.insertAdjacentHTML('beforeend', `<img id="photo-preview-element" src="${url}" class="absolute inset-0 w-full h-full object-cover rounded-lg shadow-md mx-auto cursor-pointer" alt="Vista previa" onclick="openMediaModal('${url}', 'image')">`);
     } else {
         showRealizadaError("Formato no soportado. Sube una imagen o un video.");
         event.target.value = ''; 
@@ -1012,7 +1007,6 @@ function revertToPendiente(cardKey) {
 
 async function confirmRevertToPendiente() {
     if (!eventToRevertId) return;
-
     const session = JSON.parse(localStorage.getItem('iglesia_session'));
     try {
         const response = await fetch(`/api/eventos/pendiente/${eventToRevertId}`, {
@@ -1141,14 +1135,13 @@ function ocultarTodasSugerencias(excepcionId = '') {
     });
 }
 
-async function prellenarFechaExacta(idInput) {
+function prellenarFechaExacta(idInput) {
     const inputFecha = document.getElementById(idInput);
     if (!inputFecha) return;
     try {
-        const res = await fetch('https://worldtimeapi.org/api/timezone/America/Caracas');
-        const data = await res.json();
-        const fechaCaracas = data.datetime.split('T')[0];
-        inputFecha.value = fechaCaracas;
+        const options = { timeZone: 'America/Caracas', year: 'numeric', month: '2-digit', day: '2-digit' };
+        const formatter = new Intl.DateTimeFormat('en-CA', options); 
+        inputFecha.value = formatter.format(new Date());
     } catch (e) {
         inputFecha.value = new Date().toISOString().split('T')[0];
     }
