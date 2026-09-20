@@ -1,11 +1,13 @@
 package com.iglesiadelacalle.sistemaiglesia.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
+import com.resend.Resend;
+import com.resend.core.exception.ResendException;
+import com.resend.services.emails.model.CreateEmailOptions;
+import com.resend.services.emails.model.CreateEmailResponse;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import jakarta.mail.internet.MimeMessage;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
@@ -13,10 +15,11 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class EmailVerificationService {
 
-    @Autowired
-    private JavaMailSender mailSender;
+    // ⚡ Inyectamos la clave de Resend desde application.properties
+    @Value("${resend.api.key}")
+    private String resendApiKey;
 
-    // ⚡ CLASE INTERNA PARA GUARDAR EL CÓDIGO Y LA HORA EXACTA ⚡
+    // CLASE INTERNA PARA GUARDAR EL CÓDIGO Y LA HORA EXACTA
     private static class Verificacion {
         String codigo;
         long timestamp;
@@ -27,13 +30,13 @@ public class EmailVerificationService {
         }
     }
 
-    // ⚡ LA MEMORIA CACHÉ AHORA GUARDA EL OBJETO COMPLETO ⚡
+    // LA MEMORIA CACHÉ GUARDA EL OBJETO COMPLETO
     private final Map<String, Verificacion> codigosDeVerificacion = new ConcurrentHashMap<>();
     
     // Tiempo límite: 5 minutos en milisegundos (5 * 60 * 1000)
     private final long TIEMPO_EXPIRACION = 300000; 
 
-    // 1. Método para generar y enviar el código
+    // 1. Método para generar y enviar el código usando la API de Resend
     public void generarYEnviarCodigo(String correoDestino, String nombreUsuario) {
         
         // Generamos un código numérico aleatorio de 6 dígitos
@@ -42,13 +45,9 @@ public class EmailVerificationService {
         // Lo guardamos en la memoria caché con su marca de tiempo
         codigosDeVerificacion.put(correoDestino, new Verificacion(codigo));
 
-        // Preparamos y enviamos el correo electrónico
+        // Preparamos y enviamos el correo electrónico vía API web
         try {
-            MimeMessage mensaje = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(mensaje, true, "UTF-8");
-
-            helper.setTo(correoDestino);
-            helper.setSubject("Código de Verificación - Iglesia de la Calle");
+            Resend resend = new Resend(resendApiKey);
 
             String contenidoHtml = 
                   "<div style='font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto; border: 1px solid #e2e8f0; border-radius: 15px;'>"
@@ -62,11 +61,20 @@ public class EmailVerificationService {
                 + "<p style='color: #475569; font-size: 14px; text-align: center;'>Bendiciones,<br><b>Sistema Iglesia de la Calle</b></p>"
                 + "</div>";
 
-            helper.setText(contenidoHtml, true);
-            mailSender.send(mensaje);
+            CreateEmailOptions params = CreateEmailOptions.builder()
+                    // ⚠️ OBLIGATORIO: Durante la fase de pruebas (Sandbox) debes usar este remitente exacto
+                    .from("Sistema Iglesia <onboarding@resend.dev>") 
+                    .to(correoDestino)
+                    .subject("Código de Verificación - Iglesia de la Calle")
+                    .html(contenidoHtml)
+                    .build();
 
-        } catch (Exception e) {
-            throw new RuntimeException("Error al enviar el correo: Verifica que el correo sea válido o tu conexión a internet.");
+            CreateEmailResponse data = resend.emails().send(params);
+            System.out.println("Correo enviado exitosamente mediante API. ID: " + data.getId());
+
+        } catch (ResendException e) {
+            System.err.println("Error enviando correo por API de Resend: " + e.getMessage());
+            throw new RuntimeException("Error al enviar el correo. Verifica el servicio de mensajería.");
         }
     }
 
