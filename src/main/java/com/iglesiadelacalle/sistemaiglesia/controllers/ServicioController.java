@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.iglesiadelacalle.sistemaiglesia.models.*;
 import com.iglesiadelacalle.sistemaiglesia.repository.*;
+import com.iglesiadelacalle.sistemaiglesia.services.SupabaseStorageService;
 
 @RestController
 @RequestMapping("/api/servicios")
@@ -21,8 +22,10 @@ public class ServicioController {
     @Autowired private UsuarioRepository usuarioRepo;
     @Autowired private PersonaRepository personaRepo;
     @Autowired private PromocionRepository promocionRepo;
-    
     @Autowired private HistorialServicioRepository historialRepo;
+    
+    // ⚡ INYECTAMOS EL SERVICIO DE LA NUBE ⚡
+    @Autowired private SupabaseStorageService supabaseService;
 
     private void registrarHistorial(String accion, String solicitanteUsername, SerDominical sd, Post postContext) {
         String solNombre = "Sistema";
@@ -79,7 +82,6 @@ public class ServicioController {
                 map.put("lider", sd.getLider() != null ? sd.getLider().getNombre() + " " + sd.getLider().getApellido() : "N/A");
                 map.put("predicador", sd.getPost().getPredicador() != null ? sd.getPost().getPredicador().getNombre() + " " + sd.getPost().getPredicador().getApellido() : "N/A");
                 
-                // ⚡ PROCESAMIENTO DE MÚLTIPLES INVITADOS ⚡
                 List<Map<String, Object>> invitadosList = new ArrayList<>();
                 if (sd.getPost().getInvitados() != null) {
                     for(Persona inv : sd.getPost().getInvitados()) {
@@ -134,7 +136,6 @@ public class ServicioController {
             post.setDirector(obtenerOCrearPersonaSilenciosa(dirData));
             post.setPredicador(obtenerOCrearPersonaSilenciosa(predData));
             
-            // ⚡ GUARDADO DE MÚLTIPLES INVITADOS ⚡
             List<Map<String, String>> invDataList = (List<Map<String, String>>) payload.get("invitados");
             List<Persona> listInvitados = new ArrayList<>();
             if (invDataList != null) {
@@ -156,13 +157,10 @@ public class ServicioController {
             sd.setEstado("Pendiente");
             sd.setOculto(false);
 
+            // ⚡ SUBIDA DEL FLYER A SUPABASE ⚡
             if (flyer != null && !flyer.isEmpty()) {
-                String uploadDir = "uploads/flyers/";
-                java.nio.file.Path uploadPath = java.nio.file.Paths.get(uploadDir);
-                if (!java.nio.file.Files.exists(uploadPath)) java.nio.file.Files.createDirectories(uploadPath);
-                String fileName = post.getIdPost() + "_flyer_" + java.util.UUID.randomUUID().toString() + "_" + flyer.getOriginalFilename().replaceAll(" ", "_");
-                java.nio.file.Files.copy(flyer.getInputStream(), uploadPath.resolve(fileName));
-                sd.setFlyerUrl("/" + uploadDir + fileName);
+                String urlFoto = supabaseService.subirArchivo(flyer);
+                sd.setFlyerUrl(urlFoto);
             }
 
             serDominicalRepo.save(sd);
@@ -217,7 +215,6 @@ public class ServicioController {
             post.setDirector(obtenerOCrearPersonaSilenciosa(dirData));
             post.setPredicador(obtenerOCrearPersonaSilenciosa(predData));
             
-            // ⚡ GUARDADO DE MÚLTIPLES INVITADOS ⚡
             List<Map<String, String>> invDataList = (List<Map<String, String>>) payload.get("invitados");
             List<Persona> listInvitados = new ArrayList<>();
             if (invDataList != null) {
@@ -235,13 +232,10 @@ public class ServicioController {
             sd.setMaestro(obtenerOCrearPersonaSilenciosa(maeData));
             sd.setLider(obtenerOCrearPersonaSilenciosa(lidData));
 
+            // ⚡ SUBIDA DEL FLYER A SUPABASE ⚡
             if (flyer != null && !flyer.isEmpty()) {
-                String uploadDir = "uploads/flyers/";
-                java.nio.file.Path uploadPath = java.nio.file.Paths.get(uploadDir);
-                if (!java.nio.file.Files.exists(uploadPath)) java.nio.file.Files.createDirectories(uploadPath);
-                String fileName = post.getIdPost() + "_flyer_" + java.util.UUID.randomUUID().toString() + "_" + flyer.getOriginalFilename().replaceAll(" ", "_");
-                java.nio.file.Files.copy(flyer.getInputStream(), uploadPath.resolve(fileName));
-                sd.setFlyerUrl("/" + uploadDir + fileName);
+                String urlFoto = supabaseService.subirArchivo(flyer);
+                sd.setFlyerUrl(urlFoto);
             }
 
             serDominicalRepo.save(sd);
@@ -298,14 +292,12 @@ public class ServicioController {
             sd.setObservaciones(observaciones);
             sd.setNovedades(novedades);
             
+            // ⚡ SUBIDA DE LA FOTO DEL SERVICIO A SUPABASE ⚡
             if (foto != null && !foto.isEmpty()) {
-                String uploadDir = "uploads/servicios/";
-                java.nio.file.Path uploadPath = java.nio.file.Paths.get(uploadDir);
-                if (!java.nio.file.Files.exists(uploadPath)) java.nio.file.Files.createDirectories(uploadPath);
-                String fileName = id + "_" + java.util.UUID.randomUUID().toString() + "_" + foto.getOriginalFilename().replaceAll(" ", "_");
-                java.nio.file.Files.copy(foto.getInputStream(), uploadPath.resolve(fileName));
-                sd.setFotoUrl("/" + uploadDir + fileName);
+                String urlFoto = supabaseService.subirArchivo(foto);
+                sd.setFotoUrl(urlFoto);
             }
+            
             serDominicalRepo.save(sd);
             registrarHistorial("Completado (Realizada)", solicitante, sd, null);
 
@@ -324,7 +316,6 @@ public class ServicioController {
         }
     }
 
-    // ⚡ LÓGICA DE EXTRACCIÓN DE PERSONA + CONGREGACIÓN ⚡
     private Persona obtenerOCrearPersonaSilenciosa(Map<String, String> datosPersona) {
         if (datosPersona == null || ((datosPersona.get("cedula") == null || datosPersona.get("cedula").isEmpty()) && (datosPersona.get("nombre") == null || datosPersona.get("nombre").isEmpty()))) {
             return null;
@@ -355,7 +346,6 @@ public class ServicioController {
             p.setGenero(gen != null && !gen.isEmpty() ? gen : "M"); 
         }
 
-        // Se guarda la congregación si viene en el JSON
         if (datosPersona.containsKey("congregacion") && !datosPersona.get("congregacion").isEmpty()) {
             p.setCongregacion(datosPersona.get("congregacion"));
         }
