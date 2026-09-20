@@ -5,10 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Optional;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +15,7 @@ import com.iglesiadelacalle.sistemaiglesia.models.*;
 import com.iglesiadelacalle.sistemaiglesia.repository.*;
 import com.iglesiadelacalle.sistemaiglesia.services.UsuarioService;
 import com.iglesiadelacalle.sistemaiglesia.services.EmailVerificationService;
+import com.iglesiadelacalle.sistemaiglesia.services.SupabaseStorageService;
 
 @RestController
 @RequestMapping("/api/usuarios")
@@ -31,9 +28,10 @@ public class UsuarioController {
     @Autowired private PersonaRepository personaRepository;
     @Autowired private RolRepository rolRepository;
     @Autowired private EmailVerificationService emailService; 
-    
-    // ⚡ INYECTAMOS EL NUEVO REPOSITORIO DE HISTORIAL
     @Autowired private HistorialUsuarioRepository historialRepo;
+    
+    // ⚡ INYECTAMOS EL SERVICIO DE LA NUBE ⚡
+    @Autowired private SupabaseStorageService supabaseService;
 
     // ==========================================
     // ⚡ MÉTODO AUTOMÁTICO DE AUDITORÍA ⚡
@@ -228,20 +226,23 @@ public class UsuarioController {
         } catch (Exception e) { return ResponseEntity.badRequest().body(e.getMessage()); }
     }
 
+    // ⚡ SUBIDA DE FOTO DE PERFIL A SUPABASE ⚡
     @PostMapping("/upload-avatar")
     public ResponseEntity<?> uploadAvatar(@RequestParam("file") MultipartFile file, @RequestParam("username") String username) {
         try {
-            Usuario user = usuarioRepository.findAll().stream().filter(u -> u.getNombreUser().equals(username)).findFirst().orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-            String uploadDir = "uploads/fotos/";
-            Path uploadPath = Paths.get(uploadDir);
-            if (!Files.exists(uploadPath)) Files.createDirectories(uploadPath);
-            String fileName = username + "_" + UUID.randomUUID().toString() + "_" + file.getOriginalFilename().replaceAll(" ", "_");
-            Path filePath = uploadPath.resolve(fileName);
-            Files.copy(file.getInputStream(), filePath);
-            String fileUrl = "/" + uploadDir + fileName;
-            user.setFotoPerfil(fileUrl);
-            usuarioRepository.save(user);
-            return ResponseEntity.ok(Map.of("mensaje", "Foto actualizada", "url", fileUrl));
+            Usuario user = usuarioRepository.findAll().stream()
+                .filter(u -> u.getNombreUser().equals(username))
+                .findFirst().orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+            
+            if (file != null && !file.isEmpty()) {
+                String fileUrl = supabaseService.subirArchivo(file);
+                if (fileUrl != null) {
+                    user.setFotoPerfil(fileUrl);
+                    usuarioRepository.save(user);
+                    return ResponseEntity.ok(Map.of("mensaje", "Foto actualizada", "url", fileUrl));
+                }
+            }
+            return ResponseEntity.badRequest().body("El archivo está vacío o hubo un error al subirlo a la nube.");
         } catch (Exception e) { return ResponseEntity.badRequest().body(e.getMessage()); }
     }
 
@@ -355,7 +356,6 @@ public class UsuarioController {
             promo.setVigencia(1);
             promocionRepository.save(promo);
 
-            // ⚡ REGISTRAMOS LA ACCIÓN EN EL HISTORIAL
             registrarHistorial("Creado", solicitante, nuevaPersona);
 
             return ResponseEntity.ok("Persona registrada. Pendiente de registro web.");
@@ -412,7 +412,6 @@ public class UsuarioController {
                 promocionRepository.save(promoActual);
             }
             
-            // ⚡ REGISTRAMOS LA ACCIÓN EN EL HISTORIAL
             registrarHistorial("Modificado", solicitante, persona);
 
             return ResponseEntity.ok("Persona modificada exitosamente");
@@ -442,7 +441,6 @@ public class UsuarioController {
             user.setEstado(nuevoEstado);
             usuarioRepository.save(user);
             
-            // ⚡ REGISTRAMOS LA ACCIÓN EN EL HISTORIAL
             String nombreAccion = nuevoEstado.equals("Activo") ? "Activado" : "Bloqueado";
             registrarHistorial(nombreAccion, solicitante, persona);
 
@@ -450,14 +448,10 @@ public class UsuarioController {
         } catch (Exception e) { return ResponseEntity.badRequest().body(e.getMessage()); }
     }
     
-    // ==========================================
-    // ⚡ ENDPOINT PARA EL HISTORIAL DE USUARIOS ⚡
-    // ==========================================
     @GetMapping("/historial")
     public ResponseEntity<?> obtenerHistorial() {
         try {
             List<HistorialUsuario> historial = historialRepo.findAll();
-            // Ordenar para mostrar los más recientes arriba
             historial.sort((a, b) -> b.getFechaHora().compareTo(a.getFechaHora()));
             return ResponseEntity.ok(historial);
         } catch (Exception e) {
